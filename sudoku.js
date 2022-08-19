@@ -8,7 +8,6 @@ class Sudoku {
 		this._blocks = fill.blocks(this._cols);
 	}
 	solve(i, j) {
-		printCellNums(this._rows);
 		if (this._reject(this._rows, this._cols, this._blocks)) return;
 		if (this._accept(this._rows, this._cols, this._blocks)) return;
 		let valids = [];
