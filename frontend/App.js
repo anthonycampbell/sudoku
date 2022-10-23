@@ -6,67 +6,28 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import Sudoku from './components/Sudoku';
+import Numbers from './components/Numbers';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   useColorScheme,
-  View,
-  Text
+  View
 } from 'react-native';
 
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
 
-const Sudoku = () => {
-  const blocksArr = Array(9).fill(null);
-  const blocks = blocksArr.map((c, i) => {
-    return <Block key={i} />
-  });
-  return (
-    <View className='sudoku' style={styles.sudoku}>{blocks}</View>
-  )
-}
-
-const Cell = (props) => {
-  return (
-    <Text className='cell' style={styles.cell}>{props.entry}</Text>
-  )
-}
-
-const Block = () => {
-  const cellsArr = Array(9).fill(null);
-  const cells = cellsArr.map((c, i) => {
-    return <Cell key={i} entry={c} />
-  });
-  return (
-    <View className="block" style={styles.block}>{cells}</View>
-  )
-}
-
-const Numbers = () => {
-  const numsArr = Array(9).fill(null);
-  const nums = numsArr.map((n, i) => {
-    return <Num key={i} num={i + 1} />
-  });
-  return (
-    <View style={styles.numbers}>{nums}</View>
-  )
-}
-
-const Num = (props) => {
-  return (
-    <Text style={styles.num}>{props.num}</Text>
-  )
-}
-
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
+  const [selectedNum, setSelectedNum] = useState(null);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -76,8 +37,8 @@ const App = () => {
         flexDirection: "column",
         alignItems: "center"
       }}>
-        <Sudoku />
-        <Numbers />
+        <Sudoku styles={styles} selectedNum={selectedNum} />
+        <Numbers styles={styles} setSelectedNum={setSelectedNum} selectedNum={selectedNum} />
       </View>
     </SafeAreaView >
   );
@@ -118,6 +79,12 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     textAlign: 'center'
+  },
+  selectedNum: {
+    width: 25,
+    height: 25,
+    textAlign: 'center',
+    color: 'blue'
   }
 });
 
