@@ -8,6 +8,7 @@
 
 import Sudoku from './components/Sudoku';
 import Numbers from './components/Numbers';
+import Actions from './components/Actions';
 import React, { useState } from 'react';
 import {
   SafeAreaView,
@@ -28,7 +29,6 @@ const App = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-
   return (
     <SafeAreaView style={backgroundStyle}>
       <View style={{
@@ -38,6 +38,7 @@ const App = () => {
         alignItems: "center"
       }}>
         <Sudoku styles={styles} selectedNum={selectedNum} />
+        <Actions styles={styles} selectedNum={selectedNum} handleErase={() => setSelectedNum(null)} />
         <Numbers styles={styles} setSelectedNum={setSelectedNum} selectedNum={selectedNum} />
       </View>
     </SafeAreaView >
@@ -80,10 +81,13 @@ const styles = StyleSheet.create({
     height: 25,
     textAlign: 'center'
   },
-  selectedNum: {
-    width: 25,
+  actions: {
+    width: 233,
     height: 25,
-    textAlign: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly'
+  },
+  selected: {
     color: 'blue'
   }
 });
