@@ -1,21 +1,15 @@
 import Cell from './Cell';
 import { View } from 'react-native';
-import { useState } from 'react';
 
 const Block = (props) => {
-  const [cellsArr, setCellArr] = useState(Array(9).fill(null));
-  const handlePress = (e, i) => {
-    const newCells = [...cellsArr];
-    newCells[i] = props.selectedNum;
-    setCellArr(newCells);
-  }
-  const cells = cellsArr.map((c, i) => {
+  const cells = props.cellsArr.map((c, i) => {
     return (
       <Cell
         key={i}
         entry={c}
         styles={props.styles}
-        handlePress={(e) => handlePress(e, i)} />
+        handlePress={(e) => props.handlePress(e, props.block, i)}
+      />
     )
   });
   return (

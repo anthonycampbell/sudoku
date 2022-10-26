@@ -22,6 +22,18 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 const App = () => {
+  const [board, setBoard] = useState(
+    [
+      [null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null]
+    ]);
   const isDarkMode = useColorScheme() === 'dark';
   const [selectedNum, setSelectedNum] = useState(null);
 
@@ -31,13 +43,16 @@ const App = () => {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <View style={{
-        backgroundColor: isDarkMode ? Colors.black : Colors.white,
-        flex: 1,
-        flexDirection: "column",
-        alignItems: "center"
-      }}>
-        <Sudoku styles={styles} selectedNum={selectedNum} />
+      <View style={[
+        { backgroundColor: isDarkMode ? Colors.black : Colors.white },
+        styles.container
+      ]}>
+        <Sudoku
+          styles={styles}
+          selectedNum={selectedNum}
+          board={board}
+          setBoard={setBoard}
+        />
         <Actions styles={styles} selectedNum={selectedNum} handleErase={() => setSelectedNum(null)} />
         <Numbers styles={styles} setSelectedNum={setSelectedNum} selectedNum={selectedNum} />
       </View>
@@ -46,6 +61,11 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center"
+  },
   cell: {
     width: 25,
     height: 25,
