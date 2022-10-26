@@ -36,10 +36,28 @@ const App = () => {
     ]);
   const isDarkMode = useColorScheme() === 'dark';
   const [selectedNum, setSelectedNum] = useState(null);
-
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+
+  const solve = (e) => {
+    const rows = [[], [], [], [], [], [], [], [], []];
+    for (let i = 0; i < board.length; i++) {
+      const block = board[i];
+      for (let j = 0; j < block.length; j++) {
+        const r = Math.floor(i / 3) * 3 + Math.floor(j / 3); // Transform cell from block into cell from row
+        const ii = (i % 3) * 3 + j % 3;
+        console.log('r ii', r, ii)
+        if (block[j] === null) {
+          rows[r][ii] = 0;
+        } else {
+          rows[r][ii] = block[j];
+        }
+      }
+    }
+    console.log(rows);
+  }
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -53,7 +71,12 @@ const App = () => {
           board={board}
           setBoard={setBoard}
         />
-        <Actions styles={styles} selectedNum={selectedNum} handleErase={() => setSelectedNum(null)} />
+        <Actions
+          styles={styles}
+          selectedNum={selectedNum}
+          handleErase={() => setSelectedNum(null)}
+          solve={solve}
+        />
         <Numbers styles={styles} setSelectedNum={setSelectedNum} selectedNum={selectedNum} />
       </View>
     </SafeAreaView >
