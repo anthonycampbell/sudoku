@@ -7,9 +7,20 @@ class Sudoku {
 		this._cols = fill.colls(this._rows);
 		this._blocks = fill.blocks(this._cols);
 	}
-	solve(i, j) {
+	solve(i, j, results=[]) {
 		if (this._reject(this._rows, this._cols, this._blocks)) return;
-		if (this._accept(this._rows, this._cols, this._blocks)) return;
+		if (this._accept(this._rows, this._cols, this._blocks)){
+			const solution = [];
+			for (const b of this._rows){
+				const rb = [];
+				for (const c of b){
+					rb.push(c.num);
+				}
+				solution.push(rb);
+			}
+			results.push(solution);
+			return;
+		}
 		let valids = [];
 		if (!this._rows[i][j].fixed) {
 			for (let ii = 1; ii <= 9; ii++) {
@@ -26,9 +37,9 @@ class Sudoku {
 		this._rows[i][j].num = s;
 		while (s) {
 			if (j < 8){
-				result = this.solve(i, j+1);
+				result = this.solve(i, j+1, results);
 			} else {
-				result = this.solve(i+1, 0);
+				result = this.solve(i+1, 0, results);
 			}
 			s = valids.shift();
 			if (!this._rows[i][j].fixed && s) this._rows[i][j].num = s;
@@ -37,8 +48,6 @@ class Sudoku {
 	}
 	_accept(rows, cols, blocks) {
 		if( this._isFinished(rows) && this._isValid(rows, cols, blocks)){
-			console.log('======ACCEPTED======');
-			printCellNums(this._rows);
 			return true;
 		}
 		return false;

@@ -1,27 +1,36 @@
 const Cell = require('./cell');
 const printCellNums = function(m) {
   m.forEach(a => {
+    let r = '';
     a.forEach(n => {
       if (n instanceof Cell) {
-        process.stdout.write(`${n.num} `);
+        r += `${n.num}`
       } else {
-        process.stdout.write(`${n} `);
+        r += `${n}`
       }
     });
-    process.stdout.write(`\n`);
+    console.log(r);
   });
-  process.stdout.write(`\n`);
+  console.log('');
 }
 
 const printBlocks = function(m) {
   m.forEach((a, i) => {
+    let b = '';
     a.forEach((n, i) => {
-      process.stdout.write(`${n.num} `);
-      i % 3 === 2 ? process.stdout.write(`\n`) : null;
+      if (n instanceof Cell) {
+        b += `${n.num}`;
+      } else {
+        b += `${n}`;
+      }
+      if (i % 3 === 2){
+        console.log(b);
+        b = '';
+      }
     });
-    i % 3 === 2 ? process.stdout.write(`-----\n`) : process.stdout.write(`\n`);
+    i % 3 === 2 ? console.log(`-----`) : console.log(``);
   });
-  process.stdout.write(`\n`);
+  console.log(``);
 }
 module.exports = {
   printCellNums,
