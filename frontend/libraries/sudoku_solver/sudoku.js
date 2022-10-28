@@ -7,11 +7,15 @@ class Sudoku {
 		this._cols = fill.colls(this._rows);
 		this._blocks = fill.blocks(this._cols);
 	}
-	solve(i, j, results=[]) {
+	solve(i, j, results=[], start=Date.now()) {
+		if (Date.now() - start > 10000) {
+			console.log('taking too long');
+			return 'oops';
+		}
 		if (this._reject(this._rows, this._cols, this._blocks)) return;
 		if (this._accept(this._rows, this._cols, this._blocks)){
 			const solution = [];
-			for (const b of this._rows){
+			for (const b of this._blocks){
 				const rb = [];
 				for (const c of b){
 					rb.push(c.num);
@@ -37,9 +41,12 @@ class Sudoku {
 		this._rows[i][j].num = s;
 		while (s) {
 			if (j < 8){
-				result = this.solve(i, j+1, results);
+				result = this.solve(i, j+1, results, start);
 			} else {
-				result = this.solve(i+1, 0, results);
+				result = this.solve(i+1, 0, results, start);
+			}
+			if (result === 'oops'){
+				return 'oops';
 			}
 			s = valids.shift();
 			if (!this._rows[i][j].fixed && s) this._rows[i][j].num = s;

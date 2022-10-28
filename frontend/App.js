@@ -35,7 +35,30 @@ const App = () => {
       [null, 9, 6, 2, 1, 8, null, 5, null],
       [1, null, 7, null, null, 6, null, 8, null],
       [8, null, 2, null, 4, 5, null, 9, null]
-    ]);
+    ],
+    // [
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null]
+    // ],
+    //[
+    //   [null, null, null, 6, 8, null, null, null, 3],
+    //   [6, null, null, 9, 5, 1, null, null, 2],
+    //   [1, null, 7, 3, null, null, 5, 6, 8],
+    //   [null, 4, null, null, null, null, null, 9, null],
+    //   [8, 1, null, null, null, null, null, 6, 5],
+    //   [null, 2, null, 8, 5, null, null, 7, 3],
+    //   [4, null, 9, 1, 6, 2, 5, null, null],
+    //   [null, null, 3, null, null, 9, 7, null, 6],
+    //   [null, 8, 5, null, 3, null, null, null, null]
+    // ]
+  );
   const isDarkMode = useColorScheme() === 'dark';
   const [selectedNum, setSelectedNum] = useState(null);
   const backgroundStyle = {
@@ -57,17 +80,15 @@ const App = () => {
         }
       }
     }
-    printSudoku.printCellNums(rows);
     let sudoku = new sudokuLibrary(rows);
     const results = [];
-    let solved = sudoku.solve(0, 0, results);
-    console.log(results);
-    for (const r of results){
-      printSudoku.printCellNums(r);
-    }
-    if (results !== 1){
+    sudoku.solve(0, 0, results);
+    if (results.length !== 1) {
       console.log('There is no unique solution. Sry bb');
-    } 
+    } else {
+      printSudoku.printBlocks(results[0]);
+      setBoard(results[0]);
+    }
   }
 
   return (
