@@ -1,4 +1,5 @@
 const Cell = require('./cell');
+const { switchBetweenBlocksAndRows } = require('./helpers')
 const rows = function (board) {
   let rows = [];
   board.forEach(a => {
@@ -21,22 +22,7 @@ const colls = function (rows) {
   return cols;
 }
 const blocks = function (rows) {
-  let blocks = [];
-  for (let i = 0; i <= 6; i += 3) {
-    for (let k = 0; k <= 6; k += 3) {
-      let block = [];
-      for (let j = 0; j < 3; j++) {
-        block.push(rows[i][j + k]);
-      }
-      for (let j = 0; j < 3; j++) {
-        block.push(rows[i + 1][j + k]);
-      }
-      for (let j = 0; j < 3; j++) {
-        block.push(rows[i + 2][j + k]);
-      }
-      blocks.push(block);
-    }
-  }
+  const blocks = switchBetweenBlocksAndRows(rows);
   return blocks;
 }
 
