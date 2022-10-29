@@ -67,9 +67,8 @@ const App = () => {
 
   const solve = (e) => {
     const rows = switchBetweenBlocksAndRows(board);
-    let sudoku = new sudokuLibrary(rows);
-    const results = [];
-    sudoku.solve(results);
+    const sudoku = new sudokuLibrary(rows);
+    const results = sudoku.solve();
     if (results.length !== 1) {
       console.log('There is no unique solution. Sry bb');
     } else {

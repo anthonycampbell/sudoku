@@ -8,9 +8,11 @@ class Sudoku {
 		this._cols = fill.colls(this._rows);
 		this._blocks = fill.blocks(this._rows);
 	}
-	solve(results = []) {
+	solve() {
 		const startTime = Date.now();
-		return this._solve(0, 0, results, startTime);
+		const results = [];
+		this._solve(0, 0, results, startTime);
+		return results;
 	}
 
 	_solve(i, j, results, startTime) {
