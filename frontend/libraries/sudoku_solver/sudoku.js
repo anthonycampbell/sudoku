@@ -1,4 +1,5 @@
-const { solutionClone } =  require('./helpers')
+const { solutionClone } = require('./helpers')
+const Cell = require('./cell');
 const fill = require('./fillStructures');
 class Sudoku {
 	constructor(board) {
@@ -86,6 +87,39 @@ class Sudoku {
 			}
 		}
 		return true;
+	}
+	printRows() {
+		this._rows.forEach(a => {
+			let r = '';
+			a.forEach(n => {
+				if (n instanceof Cell) {
+					r += `${n.num}`
+				} else {
+					r += `${n}`
+				}
+			});
+			console.log(r);
+		});
+		console.log('');
+	}
+
+	printBlocks() {
+		this._blocks.forEach((a, i) => {
+			let b = '';
+			a.forEach((n, i) => {
+				if (n instanceof Cell) {
+					b += `${n.num}`;
+				} else {
+					b += `${n}`;
+				}
+				if (i % 3 === 2) {
+					console.log(b);
+					b = '';
+				}
+			});
+			i % 3 === 2 ? console.log(`-----`) : console.log(``);
+		});
+		console.log(``);
 	}
 }
 module.exports = Sudoku;
