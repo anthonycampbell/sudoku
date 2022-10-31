@@ -1,13 +1,16 @@
 const { solutionClone } = require('./helpers')
 const Cell = require('./cell');
 const fill = require('./fillStructures');
+
 class Sudoku {
+
 	constructor(board) {
 		this._board = board;
 		this._rows = fill.rows(this._board);
 		this._cols = fill.colls(this._rows);
 		this._blocks = fill.blocks(this._rows);
 	}
+
 	solve() {
 		const startTime = Date.now();
 		const results = [];
@@ -16,15 +19,38 @@ class Sudoku {
 	}
 
 	_solve(i, j, results, startTime) {
-		if (Date.now() - startTime > 10000) {
-			console.log('taking too long');
-			return 'oops';
+		if (this._reject(this._rows, this._cols, this._blocks, startTime)) {
+			return;
 		}
-		if (this._reject(this._rows, this._cols, this._blocks)) return;
 		if (this._accept(this._rows, this._cols, this._blocks)) {
 			results.push(solutionClone(this._blocks));
 			return;
 		}
+		const valids = this._start(i, j);
+		let s = valids.shift();
+		let result;
+		this._rows[i][j].num = s;
+		while (s) {
+			const { nextI, nextJ } = this._nextCell(i, j);
+			result = this._solve(nextI, nextJ, results, startTime);
+			s = valids.shift();
+			if (!this._rows[i][j].fixed && s) {
+				this._rows[i][j].num = s;
+			}
+		}
+		if (!this._rows[i][j].fixed) {
+			this._rows[i][j].num = 0;
+		}
+	}
+
+	_nextCell(i, j) {
+		if (j < 8) {
+			return { nextI: i, nextJ: j + 1 };
+		}
+		return { nextI: i + 1, nextJ: 0 };
+	}
+	
+	_start(i, j) {
 		let valids = [];
 		if (!this._rows[i][j].fixed) {
 			for (let ii = 1; ii <= 9; ii++) {
@@ -36,36 +62,27 @@ class Sudoku {
 		} else {
 			valids.push(this._rows[i][j].num);
 		}
-		let s = valids.shift();
-		let result;
-		this._rows[i][j].num = s;
-		while (s) {
-			if (j < 8) {
-				result = this._solve(i, j + 1, results, startTime);
-			} else {
-				result = this._solve(i + 1, 0, results, startTime);
-			}
-			if (result === 'oops') {
-				return 'oops';
-			}
-			s = valids.shift();
-			if (!this._rows[i][j].fixed && s) this._rows[i][j].num = s;
-		}
-		if (!this._rows[i][j].fixed) this._rows[i][j].num = 0;
+		return valids;
 	}
+
 	_accept(rows, cols, blocks) {
 		if (this._isFinished(rows) && this._isValid(rows, cols, blocks)) {
 			return true;
 		}
 		return false;
 	}
-	_reject(rows, cols, blocks) {
+
+	_reject(rows, cols, blocks, startTime) {
+		if (Date.now() - startTime > 10000) {
+			return true;
+		}
 		if (!this._isValid(rows, cols, blocks)) {
 			console.log('dead');
 			return true;
 		}
 		return false;
 	}
+
 	_isFinished(rows) {
 		for (let i = 0; i < rows.length; i++) {
 			for (let j = 0; j < rows[i].length; j++) {
@@ -76,9 +93,11 @@ class Sudoku {
 		}
 		return true;
 	}
+
 	_isValid(rows, cols, blocks) {
 		return this._checkSet(rows) && this._checkSet(cols) && this._checkSet(blocks);
 	}
+
 	_checkSet(a) {
 		for (let i = 0; i < a.length; i++) {
 			let sorted = a[i].slice().sort((a, b) => a.num - b.num);
@@ -90,6 +109,7 @@ class Sudoku {
 		}
 		return true;
 	}
+
 	printRows() {
 		this._rows.forEach(a => {
 			let r = '';
