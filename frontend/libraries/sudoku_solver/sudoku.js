@@ -29,31 +29,70 @@ class Sudoku {
 	solve() {
 		const startTime = Date.now();
 		const results = [];
-		this._solve(0, 0, results, startTime);
+		this._solve(0, results, startTime);
 		return results;
 	}
 
-	_solve(i, j, results, startTime) {
-		if (this._reject(this._rows, this._cols, this._blocks, startTime)) {
+	_solve(i, results, startTime) {
+		if (this._reject(this._sortedRows, this._sortedCols, this._sortedBlocks, startTime)) {
 			return;
 		}
-		if (this._accept(this._rows, this._cols, this._blocks)) {
-			results.push(solutionClone(this._blocks));
+		if (this._accept(this._sortedRows, this._sortedCols, this._sortedBlocks)) {
+			results.push(solutionClone(this._sortedBlocks));
 			return;
 		}
-		const valids = this._rows[i][j].valids.values();
+		const cell = this._sortedCells[i];
+		const valids = cell.valids.values();
 		let s = valids.next().value;
-		this._rows[i][j].num = s;
+		cell.num = s;
+		if (s) {
+			this._trimValids(cell.x, cell.y, cell.block, s);
+		}
+		this.printRows(this._sortedRows);
+		this._sortedCells.forEach(c => console.log(c));
 		while (s) {
-			const { nextI, nextJ } = this._nextCell(i, j);
-			this._solve(nextI, nextJ, results, startTime);
+			this._solve(i + 1, results, startTime);
 			s = valids.next().value;
-			if (!this._rows[i][j].fixed && s) {
-				this._rows[i][j].num = s;
+			if (!cell.fixed && s) {
+				this._expandValids(cell.x, cell.y, cell.block, cell.num);
+				cell.num = s;
+				this._trimValids(cell.x, cell.y, cell.block, s);
 			}
 		}
-		if (!this._rows[i][j].fixed) {
-			this._rows[i][j].num = 0;
+		if (!cell.fixed) {
+			const num = cell.num;
+			cell.num = 0;
+			if (num) {
+				this._expandValids(cell.x, cell.y, cell.block, num);
+			}
+		}
+	}
+
+	_trimValids(x, y, b, num) {
+		this._removeFromAffectedAreas(this._sortedRows, x, num);
+		this._removeFromAffectedAreas(this._sortedCols, y, num);
+		this._removeFromAffectedAreas(this._sortedBlocks, b, num);
+	}
+
+	_expandValids(x, y, b, num) {
+		this._addToAffectedAreas(this._sortedRows, x, num);
+		this._addToAffectedAreas(this._sortedCols, y, num);
+		this._addToAffectedAreas(this._sortedBlocks, b, num);
+	}
+
+	_addToAffectedAreas(a, x, num) {
+		for (let i = 0; i < 9; i++) {
+			if (!a[x][i].fixed) {
+				a[x][i].valids.add(num);
+			}
+		}
+	}
+
+	_removeFromAffectedAreas(a, x, num) {
+		for (let i = 0; i < 9; i++) {
+			if (!a[x][i].fixed) {
+				a[x][i].valids.delete(num);
+			}
 		}
 	}
 
@@ -69,13 +108,6 @@ class Sudoku {
 				c.num = 0;
 			}
 		}));
-	}
-
-	_nextCell(i, j) {
-		if (j < 8) {
-			return { nextI: i, nextJ: j + 1 };
-		}
-		return { nextI: i + 1, nextJ: 0 };
 	}
 
 	_accept(rows, cols, blocks) {

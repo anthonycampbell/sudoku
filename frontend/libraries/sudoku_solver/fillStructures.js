@@ -15,6 +15,9 @@ const cols = function (rows) {
 
 const blocks = function (rows) {
   const blocks = switchBetweenBlocksAndRows(rows);
+  blocks.forEach((arr, b) => arr.forEach(c => {
+    c.block = b;
+  }));
   return blocks;
 }
 

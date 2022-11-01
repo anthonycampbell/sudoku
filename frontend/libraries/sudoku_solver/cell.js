@@ -1,10 +1,11 @@
 class Cell {
 
-  constructor(x, y, n, f) {
+  constructor(x, y, b, n, f) {
     this.val = n;
     this.possibilities = new Set([]);
     this.x = x;
     this.y = y;
+    this.b = b;
     f ? this.fixed = true : this.fixed = false;
   }
 
@@ -18,6 +19,14 @@ class Cell {
 
   get valids() {
     return this.possibilities;
+  }
+
+  get block() {
+    return this.b;
+  }
+
+  set block(b) {
+    this.b = b;
   }
 
 }
