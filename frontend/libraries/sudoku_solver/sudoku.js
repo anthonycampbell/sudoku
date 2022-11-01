@@ -9,37 +9,21 @@ class Sudoku {
 		this._rows = fill.rows(this._board);
 		this._cols = fill.colls(this._rows);
 		this._blocks = fill.blocks(this._rows);
-		this._initValids();
+		this._initValids(this._rows, this._cols, this._blocks);
 
-		this._testRows = fill.rows(this._board);
-		this._testCols = fill.colls(this._testRows);
-		this._testBlocks = fill.blocks(this._testRows);
+		this._sortedRows = fill.rows(this._board);
+		this._sortedCols = fill.colls(this._sortedRows);
+		this._sortedBlocks = fill.blocks(this._sortedRows);
+		this._initValids(this._sortedRows, this._sortedCols, this._sortedBlocks);
 
-		const something = [];
-		for (const r of this._testRows) {
-			for (const c of r) {
-				something.push(c);
-				if (!c.fixed) {
-					for (let ii = 1; ii <= 9; ii++) {
-						c.num = ii;
-						if (this._isValid(this._testRows, this._testCols, this._testBlocks)) {
-							c.valids.add(ii);
-						}
-					}
-					c.num = 0;
-				}
-			}
-		}
+		this._sortedCells = this.sortCells(this._sortedRows);
+	}
 
-		something.sort((a, b) => {
-			return a.valids.size - b.valids.size;
-		});
-
-		something.forEach(c => {
-			console.log(c);
-		});
-
-		this.printRows(this._testRows);
+	sortCells(rows) {
+		const s = [];
+		rows.forEach(r => r.forEach(c => s.push(c)));
+		s.sort((a, b) => a.valids.size - b.valids.size);
+		return s;
 	}
 
 	solve() {
@@ -73,13 +57,13 @@ class Sudoku {
 		}
 	}
 
-	_initValids() {
-		for (const r of this._rows) {
+	_initValids(rows, cols, blocks) {
+		for (const r of rows) {
 			for (const c of r) {
 				if (!c.fixed) {
 					for (let ii = 1; ii <= 9; ii++) {
 						c.num = ii;
-						if (this._isValid(this._rows, this._cols, this._blocks)) {
+						if (this._isValid(rows, cols, blocks)) {
 							c.valids.add(ii);
 						}
 					}
