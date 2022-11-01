@@ -9,6 +9,37 @@ class Sudoku {
 		this._rows = fill.rows(this._board);
 		this._cols = fill.colls(this._rows);
 		this._blocks = fill.blocks(this._rows);
+		this._initValids();
+
+		this._testRows = fill.rows(this._board);
+		this._testCols = fill.colls(this._testRows);
+		this._testBlocks = fill.blocks(this._testRows);
+
+		const something = [];
+		for (const r of this._testRows) {
+			for (const c of r) {
+				something.push(c);
+				if (!c.fixed) {
+					for (let ii = 1; ii <= 9; ii++) {
+						c.num = ii;
+						if (this._isValid(this._testRows, this._testCols, this._testBlocks)) {
+							c.valids.add(ii);
+						}
+					}
+					c.num = 0;
+				}
+			}
+		}
+
+		something.sort((a, b) => {
+			return a.valids.size - b.valids.size;
+		});
+
+		something.forEach(c => {
+			console.log(c);
+		});
+
+		this.printRows(this._testRows);
 	}
 
 	solve() {
@@ -26,14 +57,13 @@ class Sudoku {
 			results.push(solutionClone(this._blocks));
 			return;
 		}
-		const valids = this._start(i, j);
-		let s = valids.shift();
-		let result;
+		const valids = this._rows[i][j].valids.values();
+		let s = valids.next().value;
 		this._rows[i][j].num = s;
 		while (s) {
 			const { nextI, nextJ } = this._nextCell(i, j);
-			result = this._solve(nextI, nextJ, results, startTime);
-			s = valids.shift();
+			this._solve(nextI, nextJ, results, startTime);
+			s = valids.next().value;
 			if (!this._rows[i][j].fixed && s) {
 				this._rows[i][j].num = s;
 			}
@@ -43,13 +73,35 @@ class Sudoku {
 		}
 	}
 
+	_initValids() {
+		for (const r of this._rows) {
+			for (const c of r) {
+				if (!c.fixed) {
+					for (let ii = 1; ii <= 9; ii++) {
+						c.num = ii;
+						if (this._isValid(this._rows, this._cols, this._blocks)) {
+							c.valids.add(ii);
+						}
+					}
+					c.num = 0;
+				}
+			}
+		}
+	}
+
+	_sortCellsByPossibilities() {
+		this._testRows.sort((a, b) => {
+			return a[0].valids.length - b[0].valids.length;
+		});
+	}
+
 	_nextCell(i, j) {
 		if (j < 8) {
 			return { nextI: i, nextJ: j + 1 };
 		}
 		return { nextI: i + 1, nextJ: 0 };
 	}
-	
+
 	_start(i, j) {
 		let valids = [];
 		if (!this._rows[i][j].fixed) {
@@ -77,7 +129,6 @@ class Sudoku {
 			return true;
 		}
 		if (!this._isValid(rows, cols, blocks)) {
-			console.log('dead');
 			return true;
 		}
 		return false;
@@ -110,8 +161,8 @@ class Sudoku {
 		return true;
 	}
 
-	printRows() {
-		this._rows.forEach(a => {
+	printRows(rows) {
+		rows.forEach(a => {
 			let r = '';
 			a.forEach(n => {
 				if (n instanceof Cell) {
@@ -144,4 +195,5 @@ class Sudoku {
 		console.log(``);
 	}
 }
+
 module.exports = Sudoku;

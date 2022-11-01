@@ -1,12 +1,11 @@
 class Cell {
 
-  constructor(n, f) {
+  constructor(x, y, n, f) {
     this.val = n;
-    if (f) {
-      this.fixed = true;
-    } else {
-      this.fixed = false;
-    }
+    this.possibilities = new Set([]);
+    this.x = x;
+    this.y = y;
+    f ? this.fixed = true : this.fixed = false;
   }
 
   get num() {
@@ -17,9 +16,10 @@ class Cell {
     this.val = n;
   }
 
-  inc() {
-    this.num += 1;
+  get valids() {
+    return this.possibilities;
   }
+
 }
 
 module.exports = Cell;
