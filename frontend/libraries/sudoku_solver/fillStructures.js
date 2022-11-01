@@ -2,32 +2,15 @@ const Cell = require('./cell');
 const { switchBetweenBlocksAndRows } = require('./helpers');
 
 const rows = function (board) {
-  let rows = [];
-  board.forEach((a, y) => {
-    let row = [];
-    a.forEach((n, x) => {
-      const c = new Cell(x, y, n, n);
-      if (n > 0) {
-        c.valids.add(n);
-      }
-      row.push(c);
-    });
-    rows.push(row);
-  });
-  return rows;
+  return board.map((a, y) => a.map((n, x) => {
+    const c = new Cell(x, y, n, n);
+    n > 0 ? c.valids.add(n) : null;
+    return c;
+  }));
 }
 
-const colls = function (rows) {
-  let cols = [];
-  for (let i = 0; i < rows.length; i++) {
-    let col = [];
-    for (let j = 0; j < rows.length; j++) {
-      let c = rows[j][i]
-      col.push(c);
-    }
-    cols.push(col);
-  }
-  return cols;
+const cols = function (rows) {
+  return Object.keys(rows[0]).map(c => rows.map(r => r[c]));
 }
 
 const blocks = function (rows) {
@@ -37,6 +20,6 @@ const blocks = function (rows) {
 
 module.exports = {
   rows,
-  colls,
+  cols,
   blocks
 }

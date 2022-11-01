@@ -16,13 +16,11 @@ const switchBetweenBlocksAndRows = function (board) {
 
 const solutionClone = function (board) {
   const solution = [];
-  for (const chunk of board) {
+  board.forEach(chunk => {
     const solutionChunk = [];
-    for (const cell of chunk) {
-      solutionChunk.push(cell.num);
-    }
+    chunk.forEach(cell => solutionChunk.push(cell.num));
     solution.push(solutionChunk);
-  }
+  });
   return solution;
 }
 

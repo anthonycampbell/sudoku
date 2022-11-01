@@ -7,12 +7,12 @@ class Sudoku {
 	constructor(board) {
 		this._board = board;
 		this._rows = fill.rows(this._board);
-		this._cols = fill.colls(this._rows);
+		this._cols = fill.cols(this._rows);
 		this._blocks = fill.blocks(this._rows);
 		this._initValids(this._rows, this._cols, this._blocks);
 
 		this._sortedRows = fill.rows(this._board);
-		this._sortedCols = fill.colls(this._sortedRows);
+		this._sortedCols = fill.cols(this._sortedRows);
 		this._sortedBlocks = fill.blocks(this._sortedRows);
 		this._initValids(this._sortedRows, this._sortedCols, this._sortedBlocks);
 
@@ -58,25 +58,17 @@ class Sudoku {
 	}
 
 	_initValids(rows, cols, blocks) {
-		for (const r of rows) {
-			for (const c of r) {
-				if (!c.fixed) {
-					for (let ii = 1; ii <= 9; ii++) {
-						c.num = ii;
-						if (this._isValid(rows, cols, blocks)) {
-							c.valids.add(ii);
-						}
+		rows.forEach(r => r.forEach(c => {
+			if (!c.fixed) {
+				for (let i = 1; i <= 9; i++) {
+					c.num = i;
+					if (this._isValid(rows, cols, blocks)) {
+						c.valids.add(i);
 					}
-					c.num = 0;
 				}
+				c.num = 0;
 			}
-		}
-	}
-
-	_sortCellsByPossibilities() {
-		this._testRows.sort((a, b) => {
-			return a[0].valids.length - b[0].valids.length;
-		});
+		}));
 	}
 
 	_nextCell(i, j) {
@@ -86,47 +78,16 @@ class Sudoku {
 		return { nextI: i + 1, nextJ: 0 };
 	}
 
-	_start(i, j) {
-		let valids = [];
-		if (!this._rows[i][j].fixed) {
-			for (let ii = 1; ii <= 9; ii++) {
-				this._rows[i][j].num = ii;
-				if (this._isValid(this._rows, this._cols, this._blocks)) {
-					valids.push(ii);
-				}
-			}
-		} else {
-			valids.push(this._rows[i][j].num);
-		}
-		return valids;
-	}
-
 	_accept(rows, cols, blocks) {
-		if (this._isFinished(rows) && this._isValid(rows, cols, blocks)) {
-			return true;
-		}
-		return false;
+		return this._isFinished(rows) && this._isValid(rows, cols, blocks);
 	}
 
 	_reject(rows, cols, blocks, startTime) {
-		if (Date.now() - startTime > 10000) {
-			return true;
-		}
-		if (!this._isValid(rows, cols, blocks)) {
-			return true;
-		}
-		return false;
+		return !this._isValid(rows, cols, blocks) || Date.now() - startTime > 10000;
 	}
 
 	_isFinished(rows) {
-		for (let i = 0; i < rows.length; i++) {
-			for (let j = 0; j < rows[i].length; j++) {
-				if (rows[i][j].num < 1 || rows[i][j].num > 9) {
-					return false;
-				}
-			}
-		}
-		return true;
+		return rows.every(r => r.every(c => 1 <= c.num && c.num <= 9));
 	}
 
 	_isValid(rows, cols, blocks) {
