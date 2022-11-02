@@ -15,8 +15,15 @@ class Sudoku {
 		this._sortedCols = fill.cols(this._sortedRows);
 		this._sortedBlocks = fill.blocks(this._sortedRows);
 		this._initValids(this._sortedRows, this._sortedCols, this._sortedBlocks);
+		this._sortedCols.forEach(col => col.forEach(c => console.log(c)));
+		console.log('============================================')
 
 		this._sortedCells = this.sortCells(this._sortedRows);
+		this._sortedCells.forEach(c => console.log(c));
+		this._sortedCells[3].num = 9;
+		this._trimValids(this._sortedCells[3]);
+		console.log('==================================')
+		this._sortedCells.forEach(c => console.log(c));
 	}
 
 	sortCells(rows) {
@@ -44,7 +51,12 @@ class Sudoku {
 		const cell = this._sortedCells[i];
 		const valids = cell.valids.values();
 		let s = valids.next().value;
-		!cell.fixed ? s ? cell.num = s : cell.num = 0 : null;
+		if (!cell.fixed && s) {
+			cell.num = s;
+		}
+		if (!cell.fixed && !s) {
+			cell.num = 0;
+		}
 		while (s) {
 			this._solve(i + 1, results, startTime);
 			s = valids.next().value;
@@ -52,33 +64,33 @@ class Sudoku {
 		}
 	}
 
-	_trimValids(x, y, b, num) {
-		this._removeFromAffectedAreas(this._sortedRows, x, num);
-		this._removeFromAffectedAreas(this._sortedCols, y, num);
-		this._removeFromAffectedAreas(this._sortedBlocks, b, num);
-		this._sortedRows[y][x].valids.add(num);
+	_trimValids(cell) {
+		const num = cell.num;
+		this._removeFromAffectedAreas(this._sortedRows, cell.x, cell.y, num);
+		this._removeFromAffectedAreas(this._sortedCols, cell.y, cell.x, num);
+		this._removeFromAffectedAreas(this._sortedBlocks, cell.block, cell.blockIndex, num);
 	}
 
-	_expandValids(x, y, b, num) {
-		this._addToAffectedAreas(this._sortedRows, x, num);
-		this._addToAffectedAreas(this._sortedCols, y, num);
-		this._addToAffectedAreas(this._sortedBlocks, b, num);
+	_expandValids(cell) {
+		const num = cell.num;
+		this._addToAffectedAreas(this._sortedRows, cell.x, cell.y, num);
+		this._addToAffectedAreas(this._sortedCols, cell.x, cell.y, num);
+		this._addToAffectedAreas(this._sortedBlocks, cell.block, cell.blockIndex, num);
 	}
 
-	_addToAffectedAreas(a, x, num) {
-		for (let i = 0; i < 9; i++) {
-			if (!a[x][i].fixed) {
-				a[x][i].valids.add(num);
+	_addToAffectedAreas(a, c, p, num) {
+		a.forEach((cell, i) => {
+			!a[c][i].fixed && i !== p ? a[c][i].valids.add(num) : null
+		});
+	}
+
+	_removeFromAffectedAreas(a, c, p, num) {
+		a.forEach((cell, i) => {
+			if (!a[c][i].fixed && i !== p && a[c][i].valids.has(num)) {
+				a[c][i].valids.delete(num);
+				a[c][i].removedValids.push(num);
 			}
-		}
-	}
-
-	_removeFromAffectedAreas(a, x, num) {
-		for (let i = 0; i < 9; i++) {
-			if (!a[x][i].fixed) {
-				a[x][i].valids.delete(num);
-			}
-		}
+		});
 	}
 
 	_initValids(rows, cols, blocks) {
