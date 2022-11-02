@@ -66,8 +66,8 @@ class Sudoku {
 
 	_trimValids(cell) {
 		const num = cell.num;
-		this._removeFromAffectedAreas(this._sortedRows, cell.x, cell.y, num);
-		this._removeFromAffectedAreas(this._sortedCols, cell.y, cell.x, num);
+		this._removeFromAffectedAreas(this._sortedRows, cell.y, cell.x, num);
+		this._removeFromAffectedAreas(this._sortedCols, cell.x, cell.y, num);
 		this._removeFromAffectedAreas(this._sortedBlocks, cell.block, cell.blockIndex, num);
 	}
 
