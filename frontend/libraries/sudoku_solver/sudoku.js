@@ -44,27 +44,11 @@ class Sudoku {
 		const cell = this._sortedCells[i];
 		const valids = cell.valids.values();
 		let s = valids.next().value;
-		cell.num = s;
-		if (s) {
-			this._trimValids(cell.x, cell.y, cell.block, s);
-		}
-		this.printRows(this._sortedRows);
-		this._sortedCells.forEach(c => console.log(c));
+		!cell.fixed ? s ? cell.num = s : cell.num = 0 : null;
 		while (s) {
 			this._solve(i + 1, results, startTime);
 			s = valids.next().value;
-			if (!cell.fixed && s) {
-				this._expandValids(cell.x, cell.y, cell.block, cell.num);
-				cell.num = s;
-				this._trimValids(cell.x, cell.y, cell.block, s);
-			}
-		}
-		if (!cell.fixed) {
-			const num = cell.num;
-			cell.num = 0;
-			if (num) {
-				this._expandValids(cell.x, cell.y, cell.block, num);
-			}
+			!cell.fixed ? s ? cell.num = s : cell.num = 0 : null;
 		}
 	}
 
@@ -72,6 +56,7 @@ class Sudoku {
 		this._removeFromAffectedAreas(this._sortedRows, x, num);
 		this._removeFromAffectedAreas(this._sortedCols, y, num);
 		this._removeFromAffectedAreas(this._sortedBlocks, b, num);
+		this._sortedRows[y][x].valids.add(num);
 	}
 
 	_expandValids(x, y, b, num) {

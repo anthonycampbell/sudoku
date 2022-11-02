@@ -3,7 +3,7 @@ const { switchBetweenBlocksAndRows } = require('./helpers');
 
 const rows = function (board) {
   return board.map((a, y) => a.map((n, x) => {
-    const c = new Cell(x, y, n, n);
+    const c = new Cell(x, y, null, n, n);
     n > 0 ? c.valids.add(n) : null;
     return c;
   }));
