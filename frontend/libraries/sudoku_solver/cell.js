@@ -23,6 +23,10 @@ class Cell {
     return this.possibilities;
   }
 
+  set valids(s) {
+    this.possibilities = s;
+  }
+
   get block() {
     return this.b;
   }

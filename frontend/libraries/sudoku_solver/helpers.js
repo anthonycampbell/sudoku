@@ -24,14 +24,10 @@ const solutionClone = function (board) {
   return solution;
 }
 
-const symmetricDifference = function (setA, setB) {
+function difference(setA, setB) {
   const _difference = new Set(setA);
   for (const elem of setB) {
-    if (_difference.has(elem)) {
-      _difference.delete(elem);
-    } else {
-      _difference.add(elem);
-    }
+    _difference.delete(elem);
   }
   return _difference;
 }
@@ -47,6 +43,6 @@ const union = function (setA, setB) {
 module.exports = {
   switchBetweenBlocksAndRows,
   solutionClone,
-  symmetricDifference,
+  difference,
   union
 }

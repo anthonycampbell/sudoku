@@ -1,4 +1,4 @@
-const { solutionClone, union, symmetricDifference } = require('./helpers')
+const { solutionClone, union, difference } = require('./helpers')
 const Cell = require('./cell');
 const fill = require('./fillStructures');
 
@@ -17,23 +17,6 @@ class Sudoku {
 		this._initValids(this._sortedRows, this._sortedCols, this._sortedBlocks);
 
 		this._sortedCells = this.sortCells(this._sortedRows);
-		this.findFixtures();
-
-		this._sortedCells.forEach(c => {
-			this._trimValids(this._findTwoCellsWithSameTwoValsInSection, c);
-		});
-
-		console.log('=========================================')
-		this._sortedRows.forEach(r => r.forEach(c => console.log(c)));
-		this.findFixtures();
-		this._sortedCells.forEach(c => {
-			this._trimValids(this._findTwoCellsWithSameTwoValsInSection, c);
-		});
-
-		console.log('=========================================')
-		this._sortedRows.forEach(r => r.forEach(c => console.log(c)));
-		this.findFixtures();
-		this.printRows(this._sortedRows);
 	}
 
 	sortCells(rows) {
@@ -48,7 +31,6 @@ class Sudoku {
 		let newNumberOfFixedCells = 0;
 		while (numberOfFixedCells - newNumberOfFixedCells !== 0) {
 			numberOfFixedCells = this._sortedCells.reduce((prev, cur) => cur.fixed ? prev + 1 : prev, 0);
-			this.printRows(this._sortedRows);
 			this._sortedCells.forEach(c => {
 				if (c.valids.size === 1 && !c.fixed) {
 					c.num = c.valids.values().next().value;
@@ -56,13 +38,21 @@ class Sudoku {
 					c.fixed = true;
 				}
 			});
+			this._sortedCells.forEach(c => {
+				this._trimValids(this._findTwoCellsWithSameTwoValsInSection, c);
+			});
+			this._sortedCells.forEach(c => {
+				this._trimValids(this._findOnlyOneInSection, c);
+			});
 			newNumberOfFixedCells = this._sortedCells.reduce((prev, cur) => cur.fixed ? prev + 1 : prev, 0);
 		}
-		this._sortedRows.forEach(r => r.forEach(c => console.log(c)));
+
 	}
 
 
 	solve() {
+		this.findFixtures();
+		this._sortedCells = this.sortCells(this._sortedRows);
 		const startTime = Date.now();
 		const results = [];
 		this._solve(0, results, startTime);
@@ -97,12 +87,14 @@ class Sudoku {
 
 	_findOnlyOneInSection(a, c, p, num) {
 		let set = new Set(a[c][p].valids);
-		a.forEach((c, i) => {
+		a.forEach((cell, i) => {
 			if (i !== p) {
-				set = symmetricDifference(set, a[c][i].valids);
+				set = difference(set, a[c][i].valids);
 			}
 		});
-		return set;
+		if (set.size === 1) {
+			a[c][p].valids = set;
+		}
 	}
 
 	_findTwoCellsWithSameTwoValsInSection(a, c, p, num) {
