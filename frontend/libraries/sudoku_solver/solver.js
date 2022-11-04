@@ -39,25 +39,6 @@ class Solver extends Sudoku {
     return !this._isValid(rows, cols, blocks) || Date.now() - startTime > 10000;
   }
 
-  _isFinished(rows) {
-    return rows.every(r => r.every(c => 1 <= c.num && c.num <= 9));
-  }
-
-  _isValid(rows, cols, blocks) {
-    return this._checkSet(rows) && this._checkSet(cols) && this._checkSet(blocks);
-  }
-
-  _checkSet(a) {
-    for (let i = 0; i < a.length; i++) {
-      let sorted = a[i].slice().sort((a, b) => a.num - b.num);
-      for (let i = 0; i < sorted.length - 1; i++) {
-        if (sorted[i].num === sorted[i + 1].num && sorted[i].num !== 0) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
 }
 
 module.exports = Solver
