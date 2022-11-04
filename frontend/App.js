@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-const sudokuLibrary = require('./libraries/sudoku_solver/sudoku');
+const SudokuSolver = require('./libraries/sudoku_solver/solver');
 import Sudoku from './components/Sudoku';
 import Numbers from './components/Numbers';
 import Actions from './components/Actions';
@@ -67,8 +67,8 @@ const App = () => {
 
   const solve = (e) => {
     const rows = switchBetweenBlocksAndRows(board);
-    const sudoku = new sudokuLibrary(rows);
-    const results = sudoku.solve();
+    const solver = new SudokuSolver(rows);
+    const results = solver.solve();
     if (results.length !== 1) {
       console.log('There is no unique solution. Sry bb');
     } else {
