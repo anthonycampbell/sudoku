@@ -3,12 +3,19 @@ const Cell = require('./cell');
 class Chunk {
   #cells = [];
   #discoveries = new Set([]);
-  constructor(c, y) {
-    this.#cells = c.map((n, x) => {
-      const cell = new Cell(x, y, null, null, n, n);
-      n > 0 ? this.#discoveries.add(n) : null;
+  constructor(arr, index) {
+    this.#cells = arr.map(cell => {
+      cell.num > 0 ? this.#discoveries.add(cell.num) : null;
       return cell;
     });
+    this.i = index;
+  }
+
+  setBlockIndeces() {
+    this.#cells.forEach((cell, i) => {
+      cell.block = this.i;
+      cell.blockIndex = i;
+    })
   }
 
   get discoveries() {

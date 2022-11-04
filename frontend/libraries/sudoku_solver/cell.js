@@ -9,6 +9,7 @@ class Cell {
     this.b = b;
     this.bi = bi;
     f ? this.fixed = true : this.fixed = false;
+    n > 0 ? this.possibilities.add(n) : null;
   }
 
   get num() {
