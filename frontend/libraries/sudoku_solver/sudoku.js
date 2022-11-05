@@ -95,17 +95,7 @@ class Sudoku {
 	}
 
 	printRows(rows) {
-		rows.forEach(a => {
-			let r = '';
-			a.cells.forEach(n => {
-				if (n instanceof Cell) {
-					r += `${n.num}`
-				} else {
-					r += `${n}`
-				}
-			});
-			console.log(r);
-		});
+		rows.forEach(r => r.printCells());
 		console.log('');
 	}
 

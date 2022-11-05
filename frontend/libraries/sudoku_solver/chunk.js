@@ -33,10 +33,6 @@ class Chunk {
     return this.#cells;
   }
 
-  setCell(cell, num) {
-    cell.num = num;
-  }
-
   trimOtherCellsValids(cell) {
     this.#cells.forEach(c => {
       if (!c.fixed && c.valids.has(cell.num)) {
@@ -76,6 +72,18 @@ class Chunk {
     if (set.size === 1) {
       cell.valids = set;
     }
+  }
+
+  printCells() {
+    let r = '';
+    this.#cells.forEach(n => {
+      if (n instanceof Cell) {
+        r += `${n.num}`
+      } else {
+        r += `${n}`
+      }
+    });
+    console.log(r);
   }
 
   print() {
