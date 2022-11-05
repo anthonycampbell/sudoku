@@ -1,4 +1,4 @@
-const { difference, switchBetweenBlocksAndRows, transpose } = require('./helpers');
+const { switchBetweenBlocksAndRows, transpose } = require('./helpers');
 const Cell = require('./cell');
 const Chunk = require('./chunk');
 
@@ -37,77 +37,41 @@ class Sudoku {
 	}
 
 	findFixtures() {
-		let oldDiscoveries = this._sortedRows.reduce((prev, r) => prev + r.discoveries.size, 0);
-		let newDiscoveries = 0;
+		while (this.foundAndSetSingleValid()) {
+			this.findTwoCellsWithSameTwoValids();
+			this.findOnlyValidInChunk();
+		}
+	}
+
+	foundAndSetSingleValid() {
+		let found = false;
 		this._sortedCells.forEach(c => {
 			if (c.valids.size === 1 && !c.fixed) {
+				found = true;
 				c.num = c.valids.values().next().value;
 				c.fixed = true;
-				newDiscoveries++;
 				this._sortedRows[c.y].trimOtherCellsValids(c);
 				this._sortedCols[c.x].trimOtherCellsValids(c);
 				this._sortedBlocks[c.block].trimOtherCellsValids(c);
 			}
 		});
-
-		this._sortedCells.forEach(c => console.log(c));
-		/*while (numberOfFixedCells - newNumberOfFixedCells !== 0) {
-			numberOfFixedCells = this._sortedCells.reduce((prev, cur) => cur.fixed ? prev + 1 : prev, 0);
-			this._sortedCells.forEach(c => {
-				if (c.valids.size === 1 && !c.fixed) {
-					c.num = c.valids.values().next().value;
-					c.fixed = true;
-					newDiscoveries++;
-					this._sortedRows[c.y].trimOtherCellsValids(c);
-					this._sortedCols[c.x].trimOtherCellsValids(c);
-					this._sortedBlocks[c.block].trimOtherCellsValids(c);
-				}
-			});
-			this._sortedCells.forEach(c => console.log(c));
-			this._sortedCells.forEach(c => {
-				this._sortedRows[c.y].findTwoCellsWithSameTwoValids(c);
-				this._sortedCols[c.x].findTwoCellsWithSameTwoValids(c);
-				this._sortedBlocks[c.block].findTwoCellsWithSameTwoValids(c);
-			});
-			this._sortedCells.forEach(c => {
-				this._trimValids(this._findOnlyOneInSection, c);
-			});
-			newNumberOfFixedCells = this._sortedCells.reduce((prev, cur) => cur.fixed ? prev + 1 : prev, 0);*/
-		//}
-
+		return found;
 	}
 
-	_findTwoCellsWithSameTwoValsInSection(a, c, p, num) {
-		let set = new Set(a[c][p].valids);
-		a.forEach((cell, i) => {
-			if (i !== p && set.size === 2 && a[c][i].valids.size === 2) {
-				if ([...set].every(v => a[c][i].valids.has(v))) {
-					a.forEach((cell, j) => {
-						if (!a[c][j].fixed && j !== p && j !== i) {
-							set.forEach(v => {
-								if (a[c][j].valids.has(v)) {
-									a[c][j].valids.delete(v);
-									a[c][j].removedValids.push(v);
-								}
-							});
-						}
-					});
-				}
-			}
+	findTwoCellsWithSameTwoValids() {
+		this._sortedCells.forEach(c => {
+			this._sortedRows[c.y].findTwoCellsWithSameTwoValids(c);
+			this._sortedCols[c.x].findTwoCellsWithSameTwoValids(c);
+			this._sortedBlocks[c.block].findTwoCellsWithSameTwoValids(c);
 		});
 	}
 
-
-	_findOnlyOneInSection(a, c, p, num) {
-		let set = new Set(a[c][p].valids);
-		a.forEach((cell, i) => {
-			if (i !== p) {
-				set = difference(set, a[c][i].valids);
-			}
+	findOnlyValidInChunk() {
+		this._sortedCells.forEach(c => {
+			this._sortedRows[c.y].findSingleValidInSingleCell(c);
+			this._sortedCols[c.x].findSingleValidInSingleCell(c);
+			this._sortedBlocks[c.block].findSingleValidInSingleCell(c);
 		});
-		if (set.size === 1) {
-			a[c][p].valids = set;
-		}
 	}
 
 	_isFinished(rows) {

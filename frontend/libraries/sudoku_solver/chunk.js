@@ -1,4 +1,4 @@
-const Cell = require('./cell');
+const { difference } = require('./helpers');
 
 class Chunk {
   #cells = [];
@@ -47,16 +47,16 @@ class Chunk {
   }
 
   findTwoCellsWithSameTwoValids(cell) {
-    let set = new Set(a[c][p].valids);
-    a.forEach((cell, i) => {
-      if (i !== p && set.size === 2 && a[c][i].valids.size === 2) {
-        if ([...set].every(v => a[c][i].valids.has(v))) {
-          a.forEach((cell, j) => {
-            if (!a[c][j].fixed && j !== p && j !== i) {
+    let set = new Set(cell.valids);
+    this.#cells.forEach((c, i) => {
+      if (c.x !== cell.x && c.y !== cell.y && set.size === 2 && c.valids.size === 2) {
+        if ([...set].every(v => c.valids.has(v))) {
+          this.#cells.forEach(oc => {
+            if (!oc.fixed && oc.x !== c.x && oc.y !== c.y && oc.x !== cell.x && oc.y !== cell.y) {
               set.forEach(v => {
-                if (a[c][j].valids.has(v)) {
-                  a[c][j].valids.delete(v);
-                  a[c][j].removedValids.push(v);
+                if (oc.valids.has(v)) {
+                  oc.valids.delete(v);
+                  oc.removedValids.push(v);
                 }
               });
             }
@@ -66,15 +66,15 @@ class Chunk {
     });
   }
 
-  findSingleValidInSingleCell() {
-    let set = new Set(a[c][p].valids);
-    a.forEach((cell, i) => {
-      if (i !== p) {
-        set = difference(set, a[c][i].valids);
+  findSingleValidInSingleCell(cell) {
+    let set = new Set(cell.valids);
+    this.#cells.forEach((c, i) => {
+      if (c.x !== cell.x && c.y !== cell.y) {
+        set = difference(set, c.valids);
       }
     });
     if (set.size === 1) {
-      a[c][p].valids = set;
+      cell.valids = set;
     }
   }
 
