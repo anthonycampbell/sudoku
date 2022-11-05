@@ -13,16 +13,13 @@ class Sudoku {
 		this._sortedBlocks = blocks.map((a, i) => new Chunk(a, i));
 		this._sortedBlocks.forEach(chunk => chunk.setBlockIndeces());
 		this._initValids();
-		this._sortedRows.forEach(r => r.print());
 		this._sortedCells = this.sortCells(this._sortedRows);
 	}
 
 	_initValids() {
 		this._board.forEach(r => r.forEach(cell => {
-			console.log(cell);
-			console.log(cell.x, cell.y, cell.block);
-			const row = this._sortedRows[cell.x];
-			const col = this._sortedCols[cell.y];
+			const row = this._sortedRows[cell.y];
+			const col = this._sortedCols[cell.x];
 			const block = this._sortedBlocks[cell.block];
 			for (let i = 1; i <= 9; i++) {
 				if (!row.has(i) && !col.has(i) && !block.has(i) && !cell.fixed) {
@@ -150,7 +147,7 @@ class Sudoku {
 	printBlocks() {
 		this._sortedBlocks.forEach((a, i) => {
 			let b = '';
-			a.forEach((n, i) => {
+			a.cells.forEach((n, i) => {
 				if (n instanceof Cell) {
 					b += `${n.num}`;
 				} else {
