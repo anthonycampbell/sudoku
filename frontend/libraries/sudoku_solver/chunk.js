@@ -21,6 +21,10 @@ class Chunk {
     })
   }
 
+  has(item) {
+    return this.#discoveries.has(item);
+  }
+
   get discoveries() {
     return this.#discoveries;
   }
@@ -29,24 +33,20 @@ class Chunk {
     return this.#cells;
   }
 
-  has(item) {
-    return this.#discoveries.has(item);
-  }
-
   setCell(cell, num) {
     cell.num = num;
   }
 
-  trimOtherCellsValids(a, c, p, num) {
-    a.forEach((cell, i) => {
-      if (!a[c][i].fixed && i !== p && a[c][i].valids.has(num)) {
-        a[c][i].valids.delete(num);
-        a[c][i].removedValids.push(num);
+  trimOtherCellsValids(cell) {
+    this.#cells.forEach(c => {
+      if (!c.fixed && c.valids.has(cell.num)) {
+        c.valids.delete(cell.num);
+        c.removedValids.push(cell.num);
       }
     });
   }
 
-  findTwoCellsWithSameTwoValids() {
+  findTwoCellsWithSameTwoValids(cell) {
     let set = new Set(a[c][p].valids);
     a.forEach((cell, i) => {
       if (i !== p && set.size === 2 && a[c][i].valids.size === 2) {

@@ -13,7 +13,7 @@ class Sudoku {
 		this._sortedBlocks = blocks.map((a, i) => new Chunk(a, i));
 		this._sortedBlocks.forEach(chunk => chunk.setBlockIndeces());
 		this._initValids();
-		this._sortedCells = this.sortCells(this._sortedRows);
+		this._sortedCells = this.sortCells(this._board);
 	}
 
 	_initValids() {
@@ -37,45 +37,44 @@ class Sudoku {
 	}
 
 	findFixtures() {
-		let numberOfFixedCells = this._sortedCells.reduce((prev, cur) => cur.fixed ? prev + 1 : prev, 0);
-		let newNumberOfFixedCells = 0;
-		while (numberOfFixedCells - newNumberOfFixedCells !== 0) {
+		let oldDiscoveries = this._sortedRows.reduce((prev, r) => prev + r.discoveries.size, 0);
+		let newDiscoveries = 0;
+		this._sortedCells.forEach(c => {
+			if (c.valids.size === 1 && !c.fixed) {
+				c.num = c.valids.values().next().value;
+				c.fixed = true;
+				newDiscoveries++;
+				this._sortedRows[c.y].trimOtherCellsValids(c);
+				this._sortedCols[c.x].trimOtherCellsValids(c);
+				this._sortedBlocks[c.block].trimOtherCellsValids(c);
+			}
+		});
+
+		this._sortedCells.forEach(c => console.log(c));
+		/*while (numberOfFixedCells - newNumberOfFixedCells !== 0) {
 			numberOfFixedCells = this._sortedCells.reduce((prev, cur) => cur.fixed ? prev + 1 : prev, 0);
 			this._sortedCells.forEach(c => {
 				if (c.valids.size === 1 && !c.fixed) {
 					c.num = c.valids.values().next().value;
-					this._trimValids(this._removeFromAffectedAreas, c);
 					c.fixed = true;
+					newDiscoveries++;
+					this._sortedRows[c.y].trimOtherCellsValids(c);
+					this._sortedCols[c.x].trimOtherCellsValids(c);
+					this._sortedBlocks[c.block].trimOtherCellsValids(c);
 				}
 			});
+			this._sortedCells.forEach(c => console.log(c));
 			this._sortedCells.forEach(c => {
-				this._trimValids(this._findTwoCellsWithSameTwoValsInSection, c);
+				this._sortedRows[c.y].findTwoCellsWithSameTwoValids(c);
+				this._sortedCols[c.x].findTwoCellsWithSameTwoValids(c);
+				this._sortedBlocks[c.block].findTwoCellsWithSameTwoValids(c);
 			});
 			this._sortedCells.forEach(c => {
 				this._trimValids(this._findOnlyOneInSection, c);
 			});
-			newNumberOfFixedCells = this._sortedCells.reduce((prev, cur) => cur.fixed ? prev + 1 : prev, 0);
-		}
+			newNumberOfFixedCells = this._sortedCells.reduce((prev, cur) => cur.fixed ? prev + 1 : prev, 0);*/
+		//}
 
-	}
-
-	_trimValids(fn, cell) {
-		const num = cell.num;
-		fn(this._sortedRows, cell.y, cell.x, num);
-		fn(this._sortedCols, cell.x, cell.y, num);
-		fn(this._sortedBlocks, cell.block, cell.blockIndex, num);
-	}
-
-	_findOnlyOneInSection(a, c, p, num) {
-		let set = new Set(a[c][p].valids);
-		a.forEach((cell, i) => {
-			if (i !== p) {
-				set = difference(set, a[c][i].valids);
-			}
-		});
-		if (set.size === 1) {
-			a[c][p].valids = set;
-		}
 	}
 
 	_findTwoCellsWithSameTwoValsInSection(a, c, p, num) {
@@ -98,16 +97,18 @@ class Sudoku {
 		});
 	}
 
-	_removeFromAffectedAreas(a, c, p, num) {
+
+	_findOnlyOneInSection(a, c, p, num) {
+		let set = new Set(a[c][p].valids);
 		a.forEach((cell, i) => {
-			if (!a[c][i].fixed && i !== p && a[c][i].valids.has(num)) {
-				a[c][i].valids.delete(num);
-				a[c][i].removedValids.push(num);
+			if (i !== p) {
+				set = difference(set, a[c][i].valids);
 			}
 		});
+		if (set.size === 1) {
+			a[c][p].valids = set;
+		}
 	}
-
-
 
 	_isFinished(rows) {
 		return rows.every(r => r.every(c => 1 <= c.num && c.num <= 9));
