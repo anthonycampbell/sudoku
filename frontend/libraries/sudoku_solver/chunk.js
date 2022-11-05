@@ -86,6 +86,21 @@ class Chunk {
     console.log(r);
   }
 
+  printCellsAsBlocks() {
+    let b = '';
+    a.cells.forEach((n, i) => {
+      if (n instanceof Cell) {
+        b += `${n.num}`;
+      } else {
+        b += `${n}`;
+      }
+      if (i % 3 === 2) {
+        console.log(b);
+        b = '';
+      }
+    });
+  }
+
   print() {
     this.#cells.forEach(c => console.log(c));
   }
