@@ -14,6 +14,10 @@ const switchBetweenBlocksAndRows = function (board) {
   return switched;
 }
 
+const transpose = function (rows) {
+  return Object.keys(rows[0]).map(c => rows.map(r => r[c]));
+}
+
 const solutionClone = function (board) {
   const solution = [];
   board.forEach(chunk => {
@@ -44,5 +48,6 @@ module.exports = {
   switchBetweenBlocksAndRows,
   solutionClone,
   difference,
-  union
+  union,
+  transpose
 }

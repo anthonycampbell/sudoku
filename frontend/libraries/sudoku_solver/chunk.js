@@ -5,6 +5,9 @@ class Chunk {
   #discoveries = new Set([]);
   constructor(arr, index) {
     this.#cells = arr.map(cell => {
+      if (this.#discoveries.has(cell.num)) {
+        console.log('oops this sudoku is invalid');
+      }
       cell.num > 0 ? this.#discoveries.add(cell.num) : null;
       return cell;
     });
@@ -43,20 +46,6 @@ class Chunk {
     });
   }
 
-  initializeCellValids() {
-    r.forEach(c => {
-      if (!c.fixed) {
-        for (let i = 1; i <= 9; i++) {
-          c.num = i;
-          if (this._isValid(rows, cols, blocks)) {
-            c.valids.add(i);
-          }
-        }
-        c.num = 0;
-      }
-    })
-  }
-
   findTwoCellsWithSameTwoValids() {
     let set = new Set(a[c][p].valids);
     a.forEach((cell, i) => {
@@ -89,6 +78,9 @@ class Chunk {
     }
   }
 
+  print() {
+    this.#cells.forEach(c => console.log(c));
+  }
 }
 
 module.exports = Chunk;

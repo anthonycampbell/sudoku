@@ -1,6 +1,5 @@
-const { difference, switchBetweenBlocksAndRows } = require('./helpers');
+const { difference, switchBetweenBlocksAndRows, transpose } = require('./helpers');
 const Cell = require('./cell');
-const fill = require('./fillStructures');
 const Chunk = require('./chunk');
 
 class Sudoku {
@@ -8,15 +7,29 @@ class Sudoku {
 	constructor(board) {
 		this._board = board.map((rows, y) => rows.map((n, x) => new Cell(x, y, null, null, n, n)));
 		this._sortedRows = this._board.map((a, i) => new Chunk(a, i));
-		const cols = Object.keys(this._board[0]).map(c => this._board.map(r => r[c]));
-		this.printRows(this._sortedRows);
+		const cols = transpose(this._board);
 		this._sortedCols = cols.map((a, i) => new Chunk(a, i));
 		const blocks = switchBetweenBlocksAndRows(this._board);
 		this._sortedBlocks = blocks.map((a, i) => new Chunk(a, i));
 		this._sortedBlocks.forEach(chunk => chunk.setBlockIndeces());
-
-		this._initValids(this._sortedRows, this._sortedCols, this._sortedBlocks);
+		this._initValids();
+		this._sortedRows.forEach(r => r.print());
 		this._sortedCells = this.sortCells(this._sortedRows);
+	}
+
+	_initValids() {
+		this._board.forEach(r => r.forEach(cell => {
+			console.log(cell);
+			console.log(cell.x, cell.y, cell.block);
+			const row = this._sortedRows[cell.x];
+			const col = this._sortedCols[cell.y];
+			const block = this._sortedBlocks[cell.block];
+			for (let i = 1; i <= 9; i++) {
+				if (!row.has(i) && !col.has(i) && !block.has(i) && !cell.fixed) {
+					cell.valids.add(i);
+				}
+			}
+		}));
 	}
 
 	sortCells(rows) {
@@ -97,19 +110,6 @@ class Sudoku {
 		});
 	}
 
-	_initValids(rows, cols, blocks) {
-		rows.forEach(r => r.forEach(c => {
-			if (!c.fixed) {
-				for (let i = 1; i <= 9; i++) {
-					c.num = i;
-					if (this._isValid(rows, cols, blocks)) {
-						c.valids.add(i);
-					}
-				}
-				c.num = 0;
-			}
-		}));
-	}
 
 
 	_isFinished(rows) {
