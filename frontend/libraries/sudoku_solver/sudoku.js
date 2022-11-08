@@ -37,25 +37,46 @@ class Sudoku {
 	}
 
 	findFixtures() {
-		while (this.foundAndSetSingleValid()) {
+		let i = 0;
+		let newDiscoveries = 0;
+		let found = 0;
+		while (i <= 3) {
+			found = this._sortedCells.reduce((prev, cell) => cell.fixed ? prev + 1 : prev, 0);
+			if (newDiscoveries === 0) {
+				i++;
+			}
+			this.manageCellsWithOnlyOneValid();
+			this.manageCellsWithOnlyValidsInChunks(this._sortedRows);
+			this.manageCellsWithOnlyValidsInChunks(this._sortedCols);
+			this.manageCellsWithOnlyValidsInChunks(this._sortedBlocks);
 			this.findTwoCellsWithSameTwoValids();
-			this.findOnlyValidInChunk();
+			newDiscoveries = this._sortedCells.reduce((prev, cell) => cell.fixed ? prev + 1 : prev, 0) - found;
 		}
+		this.printRows(this._sortedRows);
 	}
 
-	foundAndSetSingleValid() {
-		let found = false;
-		this._sortedCells.forEach(c => {
-			if (c.valids.size === 1 && !c.fixed) {
-				found = true;
-				c.num = c.valids.values().next().value;
-				c.fixed = true;
-				this._sortedRows[c.y].trimOtherCellsValids(c);
-				this._sortedCols[c.x].trimOtherCellsValids(c);
-				this._sortedBlocks[c.block].trimOtherCellsValids(c);
-			}
+	setCells(discoveries) {
+		discoveries.forEach(c => c.setToLastPossibleValid());
+	}
+
+	trimAffectedChunksValids(discoveries) {
+		discoveries.forEach(c => {
+			this._sortedRows[c.y].trimOtherCellsValids(c);
+			this._sortedCols[c.x].trimOtherCellsValids(c);
+			this._sortedBlocks[c.block].trimOtherCellsValids(c);
 		});
-		return found;
+	}
+
+	manageCellsWithOnlyOneValid() {
+		const discoveries = this._sortedCells.filter(c => c.valids.size === 1 && !c.fixed);
+		this.setCells(discoveries);
+		this.trimAffectedChunksValids(discoveries);
+	}
+
+	manageCellsWithOnlyValidsInChunks(chunks) {
+		const discoveries = chunks.map(chunk => chunk.findCellsWithOnlyValidInChunk()).flat();
+		this.setCells(discoveries);
+		this.trimAffectedChunksValids(discoveries);
 	}
 
 	findTwoCellsWithSameTwoValids() {
@@ -66,16 +87,8 @@ class Sudoku {
 		});
 	}
 
-	findOnlyValidInChunk() {
-		this._sortedCells.forEach(c => {
-			this._sortedRows[c.y].findSingleValidInSingleCell(c);
-			this._sortedCols[c.x].findSingleValidInSingleCell(c);
-			this._sortedBlocks[c.block].findSingleValidInSingleCell(c);
-		});
-	}
-
 	_isFinished(rows) {
-		return rows.every(r => r.every(c => 1 <= c.num && c.num <= 9));
+		return rows.every(r => r.cells.every(c => 1 <= c.num && c.num <= 9));
 	}
 
 	_isValid(rows, cols, blocks) {
@@ -84,7 +97,7 @@ class Sudoku {
 
 	_checkSection(a) {
 		for (let i = 0; i < a.length; i++) {
-			let sorted = a[i].slice().sort((a, b) => a.num - b.num);
+			let sorted = a[i].cells.slice().sort((a, b) => a.num - b.num);
 			for (let i = 0; i < sorted.length - 1; i++) {
 				if (sorted[i].num === sorted[i + 1].num && sorted[i].num !== 0) {
 					return false;

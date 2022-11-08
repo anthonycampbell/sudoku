@@ -48,6 +48,15 @@ class Cell {
     return this.removedPossibilities;
   }
 
+  equals(cell) {
+    return cell.x === this.x && cell.y === this.y;
+  }
+
+  setToLastPossibleValid() {
+    this.val = this.valids.values().next().value;
+    this.fixed = true;
+  }
+
 }
 
 module.exports = Cell;

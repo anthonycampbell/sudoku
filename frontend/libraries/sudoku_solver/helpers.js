@@ -22,7 +22,7 @@ const solutionClone = function (board) {
   const solution = [];
   board.forEach(chunk => {
     const solutionChunk = [];
-    chunk.forEach(cell => solutionChunk.push(cell.num));
+    chunk.cells.forEach(cell => solutionChunk.push(cell.num));
     solution.push(solutionChunk);
   });
   return solution;

@@ -1,4 +1,5 @@
 const { difference } = require('./helpers');
+const Cell = require('./cell');
 
 class Chunk {
   #cells = [];
@@ -14,17 +15,6 @@ class Chunk {
     this.i = index;
   }
 
-  setBlockIndeces() {
-    this.#cells.forEach((cell, i) => {
-      cell.block = this.i;
-      cell.blockIndex = i;
-    })
-  }
-
-  has(item) {
-    return this.#discoveries.has(item);
-  }
-
   get discoveries() {
     return this.#discoveries;
   }
@@ -33,7 +23,20 @@ class Chunk {
     return this.#cells;
   }
 
+
+  has(item) {
+    return this.#discoveries.has(item);
+  }
+
+  setBlockIndeces() {
+    this.#cells.forEach((cell, i) => {
+      cell.block = this.i;
+      cell.blockIndex = i;
+    })
+  }
+
   trimOtherCellsValids(cell) {
+    this.#discoveries.add(cell.num);
     this.#cells.forEach(c => {
       if (!c.fixed && c.valids.has(cell.num)) {
         c.valids.delete(cell.num);
@@ -42,13 +45,30 @@ class Chunk {
     });
   }
 
+  findCellsWithOnlyValidInChunk() {
+    return this.#cells.filter(c => {
+      let set = new Set(c.valids);
+      const otherCells = this.#cells.filter(o => !o.equals(c));
+      otherCells.forEach(o => set = difference(set, o.valids));
+      if (set.size === 1 && !c.fixed) {
+        c.valids.forEach(v => {
+          if (v !== set.values().next().value) {
+            c.valids.delete(v);
+            c.removedValids.push(v);
+          }
+        });
+      };
+      return set.size === 1 && !c.fixed;
+    });
+  }
+
   findTwoCellsWithSameTwoValids(cell) {
     let set = new Set(cell.valids);
-    this.#cells.forEach((c, i) => {
-      if (c.x !== cell.x && c.y !== cell.y && set.size === 2 && c.valids.size === 2) {
+    this.#cells.forEach(c => {
+      if (!c.equals(cell) && set.size === 2 && c.valids.size === 2) {
         if ([...set].every(v => c.valids.has(v))) {
           this.#cells.forEach(oc => {
-            if (!oc.fixed && oc.x !== c.x && oc.y !== c.y && oc.x !== cell.x && oc.y !== cell.y) {
+            if (!oc.fixed && !oc.equals(c) && !oc.equals(cell)) {
               set.forEach(v => {
                 if (oc.valids.has(v)) {
                   oc.valids.delete(v);
@@ -60,18 +80,6 @@ class Chunk {
         }
       }
     });
-  }
-
-  findSingleValidInSingleCell(cell) {
-    let set = new Set(cell.valids);
-    this.#cells.forEach((c, i) => {
-      if (c.x !== cell.x && c.y !== cell.y) {
-        set = difference(set, c.valids);
-      }
-    });
-    if (set.size === 1) {
-      cell.valids = set;
-    }
   }
 
   printCells() {
