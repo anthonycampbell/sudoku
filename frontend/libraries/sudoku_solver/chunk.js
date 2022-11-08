@@ -35,6 +35,13 @@ class Chunk {
     })
   }
 
+  setTBlockIndeces() {
+    this.#cells.forEach((cell, i) => {
+      cell.tBlock = this.i;
+      cell.tBlockIndex = i;
+    })
+  }
+
   trimOtherCellsValids(cell) {
     this.#discoveries.add(cell.num);
     this.#cells.forEach(c => {
@@ -82,6 +89,27 @@ class Chunk {
     });
   }
 
+  findOnlyLineOfValids() {
+    const allPossibilities = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    const undiscovered = difference(allPossibilities, this.#discoveries);
+    const groups = [[], [], []];
+    let inALine;
+    let onlyLineWithPossibility;
+    let answers = [];
+    let theGroup;
+    this.#cells.forEach((c, i) => groups[Math.floor(i / 3)].push(c));
+    undiscovered.forEach(p => {
+      inALine = [{ l: false, i: 0 }, { l: false, i: 1 }, { l: false, i: 2 }];
+      groups.forEach((g, i) => inALine[i].l = g.some(c => c.valids.has(p)));
+      onlyLineWithPossibility = inALine.filter(p => p.l);
+      if (onlyLineWithPossibility.length === 1) {
+        theGroup = { cell: groups[onlyLineWithPossibility[0].i][0], p };
+        answers.push(theGroup);
+      }
+    });
+    return answers;
+  }
+
   printCells() {
     let r = '';
     this.#cells.forEach(n => {
@@ -96,7 +124,7 @@ class Chunk {
 
   printCellsAsBlocks() {
     let b = '';
-    a.cells.forEach((n, i) => {
+    this.#cells.forEach((n, i) => {
       if (n instanceof Cell) {
         b += `${n.num}`;
       } else {

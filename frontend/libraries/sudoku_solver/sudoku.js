@@ -12,6 +12,11 @@ class Sudoku {
 		const blocks = switchBetweenBlocksAndRows(this._board);
 		this._sortedBlocks = blocks.map((a, i) => new Chunk(a, i));
 		this._sortedBlocks.forEach(chunk => chunk.setBlockIndeces());
+
+		const tBlocks = switchBetweenBlocksAndRows(cols);
+		this._sortedTBlocks = tBlocks.map((a, i) => new Chunk(a, i));
+		this._sortedTBlocks.forEach(chunk => chunk.setTBlockIndeces());
+
 		this._initValids();
 		this._sortedCells = this.sortCells(this._board);
 	}
@@ -50,9 +55,9 @@ class Sudoku {
 			this.manageCellsWithOnlyValidsInChunks(this._sortedCols);
 			this.manageCellsWithOnlyValidsInChunks(this._sortedBlocks);
 			this.findTwoCellsWithSameTwoValids();
+			this.manageOnlyLineOfValidsInABlock();
 			newDiscoveries = this._sortedCells.reduce((prev, cell) => cell.fixed ? prev + 1 : prev, 0) - found;
 		}
-		this.printRows(this._sortedRows);
 	}
 
 	setCells(discoveries) {
@@ -64,6 +69,7 @@ class Sudoku {
 			this._sortedRows[c.y].trimOtherCellsValids(c);
 			this._sortedCols[c.x].trimOtherCellsValids(c);
 			this._sortedBlocks[c.block].trimOtherCellsValids(c);
+			this._sortedTBlocks[c.tBlock].trimOtherCellsValids(c);
 		});
 	}
 
@@ -84,6 +90,31 @@ class Sudoku {
 			this._sortedRows[c.y].findTwoCellsWithSameTwoValids(c);
 			this._sortedCols[c.x].findTwoCellsWithSameTwoValids(c);
 			this._sortedBlocks[c.block].findTwoCellsWithSameTwoValids(c);
+		});
+	}
+
+	manageOnlyLineOfValidsInABlock() {
+		this._sortedBlocks.forEach(chunk => {
+			const arr = chunk.findOnlyLineOfValids();
+			arr.forEach(ans => {
+				this._sortedRows[ans.cell.y].cells.forEach(c => {
+					if (c.block !== ans.cell.block && c.valids.has(ans.p)) {
+						c.valids.delete(ans.p);
+						c.removedValids.push(ans.p);
+					}
+				})
+			})
+		});
+		this._sortedTBlocks.forEach(chunk => {
+			const arr = chunk.findOnlyLineOfValids();
+			arr.forEach(ans => {
+				this._sortedCols[ans.cell.x].cells.forEach(c => {
+					if (c.block !== ans.cell.block && c.valids.has(ans.p)) {
+						c.valids.delete(ans.p);
+						c.removedValids.push(ans.p);
+					}
+				})
+			})
 		});
 	}
 
@@ -112,8 +143,9 @@ class Sudoku {
 		console.log('');
 	}
 
-	printBlocks() {
-		this._sortedBlocks.forEach((a, i) => {
+	printBlocks(blocks) {
+		blocks.forEach((a, i) => {
+			console.log(a[0]);
 			a.printCellsAsBlocks();
 			i % 3 === 2 ? console.log(`-----`) : console.log(``);
 		});

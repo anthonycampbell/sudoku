@@ -1,5 +1,6 @@
 class Cell {
-
+  tb;
+  tbi;
   constructor(x, y, b, bi, n, f) {
     this.val = n;
     this.possibilities = new Set([]);
@@ -42,6 +43,22 @@ class Cell {
 
   set blockIndex(i) {
     this.bi = i;
+  }
+
+  get tBlock() {
+    return this.tb;
+  }
+
+  set tBlock(tb) {
+    this.tb = tb;
+  }
+
+  get tBlockIndex() {
+    return this.tbi;
+  }
+
+  set tBlockIndex(i) {
+    this.tbi = i;
   }
 
   get removedValids() {
