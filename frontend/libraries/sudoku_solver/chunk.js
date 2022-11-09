@@ -1,4 +1,4 @@
-const { difference } = require('./helpers');
+const { difference, intersection } = require('./helpers');
 const Cell = require('./cell');
 
 class Chunk {
@@ -85,6 +85,27 @@ class Chunk {
             }
           });
         }
+      }
+    });
+  }
+
+  findAndManageHiddenValues() {
+    const possibleHiddenPairs = [];
+    console.log('index:', this.i);
+    this.#cells.forEach(c1 => {
+      this.#cells.forEach(c2 => {
+        if (!c1.equals(c2)) {
+          possibleHiddenPairs.push({ int: intersection(c1.valids, c2.valids), c1, c2 });
+        }
+      })
+    });
+    possibleHiddenPairs.forEach(o => {
+      const otherCells = this.#cells.filter(c => !c.equals(o.c1) && !c.equals(o.c2));
+      otherCells.forEach(c => o.int = difference(o.int, c.valids));
+      if (o.int.size === 2) {
+        o.c1.valids = o.int;
+        o.c2.valids = o.int;
+
       }
     });
   }

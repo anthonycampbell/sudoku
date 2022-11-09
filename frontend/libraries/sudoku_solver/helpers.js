@@ -44,10 +44,21 @@ const union = function (setA, setB) {
   return _union;
 }
 
+const intersection = function (setA, setB) {
+  const _intersection = new Set();
+  for (const elem of setA) {
+    if (setB.has(elem)) {
+      _intersection.add(elem);
+    }
+  }
+  return _intersection;
+}
+
 module.exports = {
   switchBetweenBlocksAndRows,
   solutionClone,
   difference,
   union,
+  intersection,
   transpose
 }

@@ -58,6 +58,8 @@ class Sudoku {
 			this.manageOnlyLineOfValidsInABlock();
 			newDiscoveries = this._sortedCells.reduce((prev, cell) => cell.fixed ? prev + 1 : prev, 0) - found;
 		}
+		this.manageHiddenValues();
+		this._board.forEach(r => r.forEach(c => console.log(c)));
 	}
 
 	setCells(discoveries) {
@@ -116,6 +118,11 @@ class Sudoku {
 				})
 			})
 		});
+	}
+
+	manageHiddenValues() {
+		console.log('cols');
+		this._sortedCols.forEach(r => r.findAndManageHiddenValues());
 	}
 
 	_isFinished(rows) {
