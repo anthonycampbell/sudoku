@@ -5,7 +5,6 @@ class Solver extends Sudoku {
 
   solve() {
     this.findFixtures();
-    this._sortedCells = this.sortCells(this._board);
     const startTime = Date.now();
     const results = [];
     this._solve(0, results, startTime);
