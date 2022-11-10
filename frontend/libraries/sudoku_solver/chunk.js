@@ -91,7 +91,6 @@ class Chunk {
 
   findAndManageHiddenValues() {
     const possibleHiddenPairs = [];
-    console.log('index:', this.i);
     this.#cells.forEach(c1 => {
       this.#cells.forEach(c2 => {
         if (!c1.equals(c2)) {

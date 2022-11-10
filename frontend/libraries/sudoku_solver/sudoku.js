@@ -56,10 +56,9 @@ class Sudoku {
 			this.manageCellsWithOnlyValidsInChunks(this._sortedBlocks);
 			this.findTwoCellsWithSameTwoValids();
 			this.manageOnlyLineOfValidsInABlock();
+			this.manageHiddenValues();
 			newDiscoveries = this._sortedCells.reduce((prev, cell) => cell.fixed ? prev + 1 : prev, 0) - found;
 		}
-		this.manageHiddenValues();
-		this._board.forEach(r => r.forEach(c => console.log(c)));
 	}
 
 	setCells(discoveries) {
@@ -121,8 +120,9 @@ class Sudoku {
 	}
 
 	manageHiddenValues() {
-		console.log('cols');
-		this._sortedCols.forEach(r => r.findAndManageHiddenValues());
+		this._sortedRows.forEach(r => r.findAndManageHiddenValues())
+		this._sortedCols.forEach(r => r.findAndManageHiddenValues())
+		this._sortedBlocks.forEach(r => r.findAndManageHiddenValues())
 	}
 
 	_isFinished(rows) {
