@@ -12,11 +12,11 @@ class Solver extends Sudoku {
   }
 
   _solve(i, results, startTime) {
-    if (this._reject(this._sortedRows, this._sortedCols, this._sortedBlocks, startTime)) {
+    if (this._reject(this._rows, this._cols, this._blks, startTime)) {
       return;
     }
-    if (this._accept(this._sortedRows, this._sortedCols, this._sortedBlocks)) {
-      results.push(solutionClone(this._sortedBlocks));
+    if (this._accept(this._rows, this._cols, this._blks)) {
+      results.push(solutionClone(this._blks));
       return;
     }
     const cell = this._sortedCells[i];

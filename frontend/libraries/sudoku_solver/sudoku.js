@@ -6,16 +6,16 @@ class Sudoku {
 
 	constructor(board) {
 		this._board = board.map((rows, y) => rows.map((n, x) => new Cell(x, y, null, null, n, n)));
-		this._sortedRows = this._board.map((a, i) => new Chunk(a, i));
+		this._rows = this._board.map((a, i) => new Chunk(a, i));
 		const cols = transpose(this._board);
-		this._sortedCols = cols.map((a, i) => new Chunk(a, i));
+		this._cols = cols.map((a, i) => new Chunk(a, i));
 		const blocks = switchBetweenBlocksAndRows(this._board);
-		this._sortedBlocks = blocks.map((a, i) => new Chunk(a, i));
-		this._sortedBlocks.forEach(chunk => chunk.setBlockIndeces());
+		this._blks = blocks.map((a, i) => new Chunk(a, i));
+		this._blks.forEach(chunk => chunk.setBlockIndeces());
 
 		const tBlocks = switchBetweenBlocksAndRows(cols);
-		this._sortedTBlocks = tBlocks.map((a, i) => new Chunk(a, i));
-		this._sortedTBlocks.forEach(chunk => chunk.setTBlockIndeces());
+		this._tBlks = tBlocks.map((a, i) => new Chunk(a, i));
+		this._tBlks.forEach(chunk => chunk.setTBlockIndeces());
 
 		this._initValids();
 		this._sortedCells = this.sortCells(this._board);
@@ -23,9 +23,9 @@ class Sudoku {
 
 	_initValids() {
 		this._board.forEach(r => r.forEach(cell => {
-			const row = this._sortedRows[cell.y];
-			const col = this._sortedCols[cell.x];
-			const block = this._sortedBlocks[cell.block];
+			const row = this._rows[cell.y];
+			const col = this._cols[cell.x];
+			const block = this._blks[cell.block];
 			for (let i = 1; i <= 9; i++) {
 				if (!row.has(i) && !col.has(i) && !block.has(i) && !cell.fixed) {
 					cell.valids.add(i);
@@ -51,9 +51,9 @@ class Sudoku {
 				i++;
 			}
 			this.manageCellsWithOnlyOneValid();
-			this.manageCellsWithOnlyValidsInChunks(this._sortedRows);
-			this.manageCellsWithOnlyValidsInChunks(this._sortedCols);
-			this.manageCellsWithOnlyValidsInChunks(this._sortedBlocks);
+			this.manageCellsWithOnlyValidsInChunks(this._rows);
+			this.manageCellsWithOnlyValidsInChunks(this._cols);
+			this.manageCellsWithOnlyValidsInChunks(this._blks);
 			this.findTwoCellsWithSameTwoValids();
 			this.manageOnlyLineOfValidsInABlock();
 			this.manageHiddenValues();
@@ -67,10 +67,10 @@ class Sudoku {
 
 	trimAffectedChunksValids(discoveries) {
 		discoveries.forEach(c => {
-			this._sortedRows[c.y].trimOtherCellsValids(c);
-			this._sortedCols[c.x].trimOtherCellsValids(c);
-			this._sortedBlocks[c.block].trimOtherCellsValids(c);
-			this._sortedTBlocks[c.tBlock].trimOtherCellsValids(c);
+			this._rows[c.y].trimOtherCellsValids(c);
+			this._cols[c.x].trimOtherCellsValids(c);
+			this._blks[c.block].trimOtherCellsValids(c);
+			this._tBlks[c.tBlock].trimOtherCellsValids(c);
 		});
 	}
 
@@ -88,17 +88,17 @@ class Sudoku {
 
 	findTwoCellsWithSameTwoValids() {
 		this._sortedCells.forEach(c => {
-			this._sortedRows[c.y].findTwoCellsWithSameTwoValids(c);
-			this._sortedCols[c.x].findTwoCellsWithSameTwoValids(c);
-			this._sortedBlocks[c.block].findTwoCellsWithSameTwoValids(c);
+			this._rows[c.y].findTwoCellsWithSameTwoValids(c);
+			this._cols[c.x].findTwoCellsWithSameTwoValids(c);
+			this._blks[c.block].findTwoCellsWithSameTwoValids(c);
 		});
 	}
 
 	manageOnlyLineOfValidsInABlock() {
-		this._sortedBlocks.forEach(chunk => {
+		this._blks.forEach(chunk => {
 			const arr = chunk.findOnlyLineOfValids();
 			arr.forEach(ans => {
-				this._sortedRows[ans.cell.y].cells.forEach(c => {
+				this._rows[ans.cell.y].cells.forEach(c => {
 					if (c.block !== ans.cell.block && c.valids.has(ans.p)) {
 						c.valids.delete(ans.p);
 						c.removedValids.push(ans.p);
@@ -106,10 +106,10 @@ class Sudoku {
 				})
 			})
 		});
-		this._sortedTBlocks.forEach(chunk => {
+		this._tBlks.forEach(chunk => {
 			const arr = chunk.findOnlyLineOfValids();
 			arr.forEach(ans => {
-				this._sortedCols[ans.cell.x].cells.forEach(c => {
+				this._cols[ans.cell.x].cells.forEach(c => {
 					if (c.block !== ans.cell.block && c.valids.has(ans.p)) {
 						c.valids.delete(ans.p);
 						c.removedValids.push(ans.p);
@@ -120,9 +120,9 @@ class Sudoku {
 	}
 
 	manageHiddenValues() {
-		this._sortedRows.forEach(r => r.findAndManageHiddenValues())
-		this._sortedCols.forEach(r => r.findAndManageHiddenValues())
-		this._sortedBlocks.forEach(r => r.findAndManageHiddenValues())
+		this._rows.forEach(r => r.findAndManageHiddenValues())
+		this._cols.forEach(r => r.findAndManageHiddenValues())
+		this._blks.forEach(r => r.findAndManageHiddenValues())
 	}
 
 	_isFinished(rows) {
