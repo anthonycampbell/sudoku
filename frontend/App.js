@@ -10,18 +10,20 @@ const SudokuSolver = require('./libraries/sudoku_solver/solver');
 import Sudoku from './components/Sudoku';
 import Numbers from './components/Numbers';
 import Actions from './components/Actions';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   useColorScheme,
-  View
+  View,
+  Text
 } from 'react-native';
 
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
 import { switchBetweenBlocksAndRows } from './libraries/sudoku_solver/helpers';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const App = () => {
   const [board, setBoard] = useState(
@@ -65,12 +67,19 @@ const App = () => {
     }
   }
 
+  const accessPhotos = (e) => {
+    launchImageLibrary({}, (c) => {
+      console.log(c)
+    });
+  }
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <View style={[
         { backgroundColor: isDarkMode ? Colors.black : Colors.white },
         styles.container
       ]}>
+        <Text style={styles.accessPhotos} onPress={accessPhotos}>accessPhotos</Text>
         <Sudoku
           styles={styles}
           selectedNum={selectedNum}
@@ -138,6 +147,9 @@ const styles = StyleSheet.create({
   },
   selected: {
     color: 'blue'
+  },
+  accessPhotos: {
+    height: 25
   }
 });
 
