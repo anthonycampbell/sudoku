@@ -50,37 +50,14 @@ class Sudoku {
 			if (newDiscoveries === 0) {
 				i++;
 			}
-			this._rows.forEach(chu => chu.cells.forEach(c => console.log(c)));
 			this.manageCellsWithOnlyOneValid();
-			if (this._rows[0].cells[4].possibilities.has(2)){
-				console.log('1');
-			}
 			this.manageCellsWithOnlyValidsInChunks(this._rows);
-			if (this._rows[0].cells[4].possibilities.has(2)){
-				console.log('2');
-			}
 			this.manageCellsWithOnlyValidsInChunks(this._cols);
-			if (this._rows[0].cells[4].possibilities.has(2)){
-				console.log('3');
-			}
 			this.manageCellsWithOnlyValidsInChunks(this._blks);
-			if (this._rows[0].cells[4].possibilities.has(2)){
-				console.log('4');
-			}
 			this.findTwoCellsWithSameTwoValids();
-			if (this._rows[0].cells[4].possibilities.has(2)){
-				console.log('5');
-			}
-			//this.manageOnlyLineOfValidsInABlock();
-			if (this._rows[0].cells[4].possibilities.has(2)){
-				console.log('6');
-			}
+			//this.manageOnlyLineOfValidsInABlock(); // method has a bug
 			this.manageHiddenValues();
-			if (this._rows[0].cells[4].possibilities.has(2)){
-				console.log('7');
-			}
 			newDiscoveries = this._sortedCells.reduce((prev, cell) => cell.fixed ? prev + 1 : prev, 0) - found;
-			this.printRows(this._rows);
 		}
 	}
 
