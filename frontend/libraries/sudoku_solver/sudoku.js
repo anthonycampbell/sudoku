@@ -50,14 +50,37 @@ class Sudoku {
 			if (newDiscoveries === 0) {
 				i++;
 			}
+			this._rows.forEach(chu => chu.cells.forEach(c => console.log(c)));
 			this.manageCellsWithOnlyOneValid();
+			if (this._rows[0].cells[4].possibilities.has(2)){
+				console.log('1');
+			}
 			this.manageCellsWithOnlyValidsInChunks(this._rows);
+			if (this._rows[0].cells[4].possibilities.has(2)){
+				console.log('2');
+			}
 			this.manageCellsWithOnlyValidsInChunks(this._cols);
+			if (this._rows[0].cells[4].possibilities.has(2)){
+				console.log('3');
+			}
 			this.manageCellsWithOnlyValidsInChunks(this._blks);
+			if (this._rows[0].cells[4].possibilities.has(2)){
+				console.log('4');
+			}
 			this.findTwoCellsWithSameTwoValids();
-			this.manageOnlyLineOfValidsInABlock();
+			if (this._rows[0].cells[4].possibilities.has(2)){
+				console.log('5');
+			}
+			//this.manageOnlyLineOfValidsInABlock();
+			if (this._rows[0].cells[4].possibilities.has(2)){
+				console.log('6');
+			}
 			this.manageHiddenValues();
+			if (this._rows[0].cells[4].possibilities.has(2)){
+				console.log('7');
+			}
 			newDiscoveries = this._sortedCells.reduce((prev, cell) => cell.fixed ? prev + 1 : prev, 0) - found;
+			this.printRows(this._rows);
 		}
 	}
 
@@ -94,6 +117,7 @@ class Sudoku {
 		});
 	}
 
+	// this is broken. Need to fix bug.
 	manageOnlyLineOfValidsInABlock() {
 		this._blks.forEach(chunk => {
 			const arr = chunk.findOnlyLineOfValids();
@@ -130,15 +154,17 @@ class Sudoku {
 	}
 
 	_isValid(rows, cols, blocks) {
-		return this._checkSection(rows) && this._checkSection(cols) && this._checkSection(blocks);
+		return this._checkChunk(rows) && this._checkChunk(cols) && this._checkChunk(blocks);
 	}
 
-	_checkSection(a) {
-		for (let i = 0; i < a.length; i++) {
-			let sorted = a[i].cells.slice().sort((a, b) => a.num - b.num);
-			for (let i = 0; i < sorted.length - 1; i++) {
-				if (sorted[i].num === sorted[i + 1].num && sorted[i].num !== 0) {
+	_checkChunk(a) {
+		for (const chunk of a) {
+			const duplicates = {};
+			for (const cell of chunk.cells) {
+				if (duplicates[cell.num] && cell.num !== 0) {
 					return false;
+				} else {
+					duplicates[cell.num] = 1;
 				}
 			}
 		}
