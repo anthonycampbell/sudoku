@@ -1,0 +1,3 @@
+/Users/anthony/cs/sudoku/Detection/CMakeFiles/DisplayImage.dir
+/Users/anthony/cs/sudoku/Detection/CMakeFiles/edit_cache.dir
+/Users/anthony/cs/sudoku/Detection/CMakeFiles/rebuild_cache.dir
