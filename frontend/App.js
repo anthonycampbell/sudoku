@@ -27,28 +27,28 @@ import { launchImageLibrary } from 'react-native-image-picker';
 
 const App = () => {
   const [board, setBoard] = useState(
-    // [
-    //   [5, 8, 6, null, null, null, null, null, null],
-    //   [4, null, null, null, 8, null, 9, null, null],
-    //   [null, null, 3, null, null, 4, null, null, 7],
-    //   [null, null, null, null, null, null, null, 3, null],
-    //   [null, null, null, null, null, 9, null, 5, null],
-    //   [null, 4, null, 7, 2, null, null, null, 1],
-    //   [7, null, null, null, 5, null, 2, null, null],
-    //   [null, null, null, null, 3, 2, null, 6, null],
-    //   [null, 6, null, null, null, null, null, null, null]
-    // ]
     [
-      [null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null]
+      [5, 8, 6, null, null, null, null, null, null],
+      [4, null, null, null, 8, null, 9, null, null],
+      [null, null, 3, null, null, 4, null, null, 7],
+      [null, null, null, null, null, null, null, 3, null],
+      [null, null, null, null, null, 9, null, 5, null],
+      [null, 4, null, 7, 2, null, null, null, 1],
+      [7, null, null, null, 5, null, 2, null, null],
+      [null, null, null, null, 3, 2, null, 6, null],
+      [null, 6, null, null, null, null, null, null, null]
     ]
+    // [
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null],
+    //   [null, null, null, null, null, null, null, null, null]
+    // ]
   );
   const isDarkMode = useColorScheme() === 'dark';
   const [selectedNum, setSelectedNum] = useState(null);
