@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <opencv2/opencv.hpp>
+
 using namespace cv;
 using namespace std;
 
@@ -288,6 +289,41 @@ int main() {
 
     Mat undistorted = Mat(Size(maxLength, maxLength), CV_8UC1);
     cv::warpPerspective(sudoku, undistorted, cv::getPerspectiveTransform(src, dst), Size(maxLength, maxLength));
+
+    Mat undistortedThreshed = undistorted.clone();
+    adaptiveThreshold(undistorted, undistortedThreshed, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY_INV, 101, 1);
+    DigitRecognizer *dr = new DigitRecognizer();
+    bool b = dr->train((char*)"../mnist/train-images-idx3-ubyte", (char*)"../mnist/train-labels-idx1-ubyte");
+    int dist = ceil((double)maxLength/9);
+    Mat currentCell = Mat(dist, dist, CV_8UC1);
+    for(int j=0;j<9;j++)
+    {
+        for(int i=0;i<9;i++)
+        {
+            for(int y=0;y<dist && j*dist+y<undistortedThreshed.cols;y++)
+            {
+
+                uchar* ptr = currentCell.ptr(y);
+
+                for(int x=0;x<dist && i*dist+x<undistortedThreshed.rows;x++)
+                {
+                    ptr[x] = undistortedThreshed.at<uchar>(j*dist+y, i*dist+x);
+                }
+            }
+            Moments m = cv::moments(currentCell, true);
+            int area = m.m00;
+            if(area > currentCell.rows*currentCell.cols/5)
+            {
+                int number = dr->classify(currentCell);
+                printf("%d ", number);
+            }
+            else
+            {
+                printf("  ");
+            }
+        }
+        printf(" ");
+    }
 
     namedWindow("Display Image", WINDOW_AUTOSIZE );
     imshow("Display Image", undistorted);
