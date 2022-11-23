@@ -55,8 +55,9 @@ class Sudoku {
 			this.manageCellsWithOnlyValidsInChunks(this._cols);
 			this.manageCellsWithOnlyValidsInChunks(this._blks);
 			this.findTwoCellsWithSameTwoValids();
-			//this.manageOnlyLineOfValidsInABlock(); // method has a bug
-			this.manageHiddenValues();
+			this.manageOnlyLineOfValidsInABlock();
+			//nvm bug is actually this method
+			//this.manageHiddenValues();
 			newDiscoveries = this._sortedCells.reduce((prev, cell) => cell.fixed ? prev + 1 : prev, 0) - found;
 		}
 	}
@@ -94,32 +95,33 @@ class Sudoku {
 		});
 	}
 
-	// this is broken. Need to fix bug.
 	manageOnlyLineOfValidsInABlock() {
 		this._blks.forEach(chunk => {
 			const arr = chunk.findOnlyLineOfValids();
-			arr.forEach(ans => {
-				this._rows[ans.cell.y].cells.forEach(c => {
-					if (c.block !== ans.cell.block && c.valids.has(ans.p)) {
-						c.valids.delete(ans.p);
-						c.removedValids.push(ans.p);
+			for (const k of Object.keys(arr)) {
+				this._rows[arr[k].cell.y].cells.forEach(c => {
+					if (c.block !== arr[k].cell.block && c.valids.has(arr[k].value)) {
+						c.valids.delete(arr[k].value);
+						c.removedValids.push(arr[k].value);
 					}
-				})
-			})
+				});
+			}
 		});
 		this._tBlks.forEach(chunk => {
 			const arr = chunk.findOnlyLineOfValids();
-			arr.forEach(ans => {
-				this._cols[ans.cell.x].cells.forEach(c => {
-					if (c.block !== ans.cell.block && c.valids.has(ans.p)) {
-						c.valids.delete(ans.p);
-						c.removedValids.push(ans.p);
+			for (const k of Object.keys(arr)) {
+				this._cols[arr[k].cell.x].cells.forEach(c => {
+					if (c.block !== arr[k].cell.block && c.valids.has(arr[k].value)) {
+						c.valids.delete(arr[k].value);
+						c.removedValids.push(arr[k].value);
 					}
-				})
-			})
+				});
+			}
 		});
 	}
 
+
+	// this is broken. Need to fix bug.
 	manageHiddenValues() {
 		this._rows.forEach(r => r.findAndManageHiddenValues())
 		this._cols.forEach(r => r.findAndManageHiddenValues())

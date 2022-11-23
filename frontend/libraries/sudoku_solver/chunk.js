@@ -104,28 +104,34 @@ class Chunk {
       if (o.int.size === 2) {
         o.c1.valids = o.int;
         o.c2.valids = o.int;
-
       }
     });
   }
 
   findOnlyLineOfValids() {
-    const allPossibilities = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    const undiscovered = difference(allPossibilities, this.#discoveries);
     const groups = [[], [], []];
-    let inALine;
-    let onlyLineWithPossibility;
-    let answers = [];
-    let theGroup;
+    let answers = {};
     this.#cells.forEach((c, i) => groups[Math.floor(i / 3)].push(c));
-    undiscovered.forEach(p => {
-      inALine = [{ l: false, i: 0 }, { l: false, i: 1 }, { l: false, i: 2 }];
-      groups.forEach((g, i) => inALine[i].l = g.some(c => c.valids.has(p)));
-      onlyLineWithPossibility = inALine.filter(p => p.l);
-      if (onlyLineWithPossibility.length === 1) {
-        theGroup = { cell: groups[onlyLineWithPossibility[0].i][0], p };
-        answers.push(theGroup);
-      }
+    groups.forEach((g, i) => {
+      g.forEach(c => {
+        if (c.valids.size > 1){
+          c.valids.forEach(v => {
+            let onlyLinewithP = true;
+            groups.forEach((g1, j) => {
+              if (i !== j) {
+                g1.forEach(c1 => {
+                  if (c1.valids.has(v)){
+                    onlyLinewithP = false;
+                  }
+                });
+              }
+            });
+            if (onlyLinewithP && !answers[c.block + ',' + v]) {
+              answers[c.block + ',' + v] = {cell: c, value: v}
+            }
+          });
+        }
+      });
     });
     return answers;
   }
