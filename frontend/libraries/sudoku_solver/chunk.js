@@ -89,6 +89,8 @@ class Chunk {
     });
   }
 
+
+  //This is causing a bug.
   findAndManageHiddenValues() {
     const possibleHiddenPairs = [];
     this.#cells.forEach(c1 => {
@@ -102,6 +104,7 @@ class Chunk {
       const otherCells = this.#cells.filter(c => !c.equals(o.c1) && !c.equals(o.c2));
       otherCells.forEach(c => o.int = difference(o.int, c.valids));
       if (o.int.size === 2) {
+        //modifying valids. also modified in manageOnlyLineOfValidsInABlock
         o.c1.valids = o.int;
         o.c2.valids = o.int;
       }
@@ -114,20 +117,20 @@ class Chunk {
     this.#cells.forEach((c, i) => groups[Math.floor(i / 3)].push(c));
     groups.forEach((g, i) => {
       g.forEach(c => {
-        if (c.valids.size > 1){
+        if (c.valids.size > 1) {
           c.valids.forEach(v => {
             let onlyLinewithP = true;
             groups.forEach((g1, j) => {
               if (i !== j) {
                 g1.forEach(c1 => {
-                  if (c1.valids.has(v)){
+                  if (c1.valids.has(v)) {
                     onlyLinewithP = false;
                   }
                 });
               }
             });
             if (onlyLinewithP && !answers[c.block + ',' + v]) {
-              answers[c.block + ',' + v] = {cell: c, value: v}
+              answers[c.block + ',' + v] = { cell: c, value: v }
             }
           });
         }
