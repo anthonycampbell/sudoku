@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/anthony/cs/sudoku/Detection/DisplayImage.cpp" "CMakeFiles/DisplayImage.dir/DisplayImage.cpp.o" "gcc" "CMakeFiles/DisplayImage.dir/DisplayImage.cpp.o.d"
+  "/Users/anthony/cs/sudoku/Detection/digitrecognizer.cpp" "CMakeFiles/DisplayImage.dir/digitrecognizer.cpp.o" "gcc" "CMakeFiles/DisplayImage.dir/digitrecognizer.cpp.o.d"
   )
 
 # Targets to which this target links.

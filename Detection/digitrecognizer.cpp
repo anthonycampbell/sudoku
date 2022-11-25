@@ -1,4 +1,4 @@
-#include "digitrecognizer.h"
+#include "digitrecognizer.hpp"
 
 DigitRecognizer::DigitRecognizer()
 {
