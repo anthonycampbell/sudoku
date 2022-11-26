@@ -4,7 +4,7 @@
 using namespace cv;
 using namespace ml;
 
-#define MAX_NUM_IMAGES    60000
+#define MAX_NUM_IMAGES 60000
 class DigitRecognizer
 {
 public:
@@ -12,7 +12,7 @@ public:
 
     ~DigitRecognizer();
 
-    bool train(char* trainPath, char* labelsPath);
+    bool train(char *trainPath, char *labelsPath);
 
     int classify(Mat img);
 
@@ -22,7 +22,6 @@ private:
     int readFlippedInteger(FILE *fp);
 
 private:
-    KNearest    *knn;
+    KNearest *knn;
     int numRows, numCols, numImages;
-
 };
