@@ -1,6 +1,12 @@
 import cv2
 from imutils import contours
 import numpy as np
+import pytesseract
+
+pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/Cellar/tesseract/5.2.0/bin/tesseract'
+file = open("recognized.txt", "w+")
+file.write("")
+file.close()
 
 # Load image, grayscale, and adaptive threshold
 image = cv2.imread('sudoku.png')
@@ -39,15 +45,19 @@ for (i, c) in enumerate(cnts, 1):
             row = []
 
 # Iterate through each box
+file = open("recognized.txt", "a")
 for row in sudoku_rows:
     for c in row:
         mask = np.zeros(image.shape, dtype=np.uint8)
-        cv2.drawContours(mask, [c], -1, (200,200,200), -1)
+        cv2.drawContours(mask, [c], -1, (255,255,255), -1)
         result = cv2.bitwise_and(image, mask)
         result[mask==0] = 255
-        cv2.imshow('result', result)
-        cv2.waitKey(175)
-
-cv2.imshow('thresh', thresh)
-cv2.imshow('invert', invert)
-cv2.waitKey()
+        text = pytesseract.image_to_string(result)
+        x, y, w, h = cv2.boundingRect(c)
+        rect = cv2.rectangle(result, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cropped = result[y:y + h, x:x + w]
+        text = pytesseract.image_to_string(cropped, config ='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
+        text = text.replace("\n", "")
+        file.write(text or '0')
+    file.write('\n')
+file.close
