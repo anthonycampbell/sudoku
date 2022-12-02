@@ -1,2 +1,0 @@
-#use_cache "/Users/anthony/cs/sudoku/opencv/.cache"
-#match_hash_in_cmake_cache "OCV_DOWNLOAD_ADE_HASH_3rdparty_ade_v0_1_2a_zip"
