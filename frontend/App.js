@@ -19,6 +19,8 @@ import {
   Text
 } from 'react-native';
 
+import { API } from 'aws-amplify';
+
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
@@ -72,6 +74,12 @@ const App = () => {
       console.log(c)
     });
   }
+
+  useEffect(() => {
+    API.get('pythonapi', '/detectsudoku')
+    .then( r => console.log(r));
+
+  });
 
   return (
     <SafeAreaView style={backgroundStyle}>
