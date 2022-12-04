@@ -10,6 +10,17 @@
       "StackName": "amplify-frontend-dev-225702",
       "StackId": "arn:aws:cloudformation:us-east-2:275382920717:stack/amplify-frontend-dev-225702/dcd56e90-73a0-11ed-b2d1-06119d60ce84",
       "AmplifyAppId": "d1lzviio2jlhwu"
+    },
+    "categories": {
+      "function": {
+        "processsudokufunction": {
+          "deploymentBucketName": "amplify-frontend-dev-225702-deployment",
+          "s3Key": "amplify-builds/processsudokufunction-476b4865714a7a316f7a-build.zip"
+        }
+      },
+      "api": {
+        "pythonapi": {}
+      }
     }
   }
 }
