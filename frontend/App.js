@@ -19,7 +19,7 @@ import {
   Text
 } from 'react-native';
 
-import { API } from 'aws-amplify';
+// import { API } from 'aws-amplify';
 
 import {
   Colors,
@@ -75,11 +75,11 @@ const App = () => {
     });
   }
 
-  useEffect(() => {
-    API.get('pythonapi', '/detectsudoku')
-    .then( r => console.log(r));
+  // useEffect(() => {
+  //   API.get('pythonapi', '/detectsudoku')
+  //   .then( r => console.log(r));
 
-  });
+  // });
 
   return (
     <SafeAreaView style={backgroundStyle}>
