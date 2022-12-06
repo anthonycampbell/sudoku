@@ -5,6 +5,9 @@ export type AmplifyDependentResourcesAttributes = {
             "Arn": "string",
             "Region": "string",
             "LambdaExecutionRole": "string"
+        },
+        "frontenddetectionlibrarieslayer": {
+            "Arn": "string"
         }
     },
     "api": {

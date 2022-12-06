@@ -15,7 +15,11 @@
       "function": {
         "processsudokufunction": {
           "deploymentBucketName": "amplify-frontend-dev-225702-deployment",
-          "s3Key": "amplify-builds/processsudokufunction-476b4865714a7a316f7a-build.zip"
+          "s3Key": "amplify-builds/processsudokufunction-524c62514a6231454a51-build.zip"
+        },
+        "frontenddetectionlibrarieslayer": {
+          "deploymentBucketName": "amplify-frontend-dev-225702-deployment",
+          "s3Key": "amplify-builds/frontenddetectionlibrarieslayer-LambdaLayerVersione3d2a3fa-build.zip"
         }
       },
       "api": {
