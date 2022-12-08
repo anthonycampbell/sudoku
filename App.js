@@ -80,7 +80,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    API.get('pythonapi', '/processsudoku')
+    API.get('processsudokuapi', '/process')
     .then( r => console.log(r));
 
   });

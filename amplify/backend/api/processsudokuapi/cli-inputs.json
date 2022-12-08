@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/process": {
+      "name": "/process",
+      "lambdaFunction": "sudokuimagetoarray",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-processsudokuimg-dev-152257-authRole",
+      "UnauthRoleArn": "arn:aws:iam::275382920717:role/amplify-processsudokuimg-dev-152257-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::275382920717:role/amplify-processsudokuimg-dev-152257-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-processsudokuimg-dev-152257-deployment",
+      "UnauthRoleName": "amplify-processsudokuimg-dev-152257-unauthRole",
+      "StackName": "amplify-processsudokuimg-dev-152257",
+      "StackId": "arn:aws:cloudformation:us-east-2:275382920717:stack/amplify-processsudokuimg-dev-152257/16e51300-7686-11ed-8692-022b29c4446c",
+      "AmplifyAppId": "d1tkthufd3t5h4"
+    },
+    "categories": {
+      "function": {
+        "sudokuimagetoarray": {
+          "deploymentBucketName": "amplify-processsudokuimg-dev-152257-deployment",
+          "s3Key": "amplify-builds/sudokuimagetoarray-46384673616947775346-build.zip"
+        }
+      },
+      "api": {
+        "processsudokuapi": {}
+      }
+    }
+  }
+}
