@@ -24,6 +24,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import { switchBetweenBlocksAndRows } from './libraries/sudoku_solver/helpers';
 import { launchImageLibrary } from 'react-native-image-picker';
+import axios from 'axios';
 
 const App = () => {
   const [board, setBoard] = useState(
@@ -70,6 +71,23 @@ const App = () => {
   const accessPhotos = (e) => {
     launchImageLibrary({}, (c) => {
       console.log(c)
+      const formData = new FormData()
+      formData.append('photo', {
+        uri: c.assets[0].uri,
+        type: c.assets[0].type,
+        name: c.assets[0].fileName
+      })
+      axios({
+        method: 'post',
+        url: 'https://sudoku-solving-api.herokuapp.com/parse',
+        data: formData
+      })
+        .then((res, stat) => {
+          console.log(res);
+        })
+        .catch((e) => {
+          console.log(e);
+        })
     });
   }
 
@@ -78,7 +96,7 @@ const App = () => {
     for (let i = 0; i < 9; i++) {
       const row = [];
       for (let j = 0; j < 9; j++) {
-        const cell = parseInt(str[i*9 + j]);
+        const cell = parseInt(str[i * 9 + j]);
         cell === '0' ? row.push(null) : row.push(cell)
       }
       rows.push(row);
