@@ -19,12 +19,6 @@ import {
   Text
 } from 'react-native';
 
-import { API } from 'aws-amplify';
-import { Amplify } from 'aws-amplify';
-import awsconfig from './src/aws-exports';
-
-Amplify.configure(awsconfig);
-
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
@@ -62,7 +56,7 @@ const App = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  const solve = (e) => {
+  const solve = () => {
     const rows = switchBetweenBlocksAndRows(board);
     const solver = new SudokuSolver(rows);
     const results = solver.solve();
@@ -79,11 +73,28 @@ const App = () => {
     });
   }
 
-  useEffect(() => {
-    API.get('processsudokuapi', '/process')
-    .then( r => console.log(r));
+  const stringToSudoku = (str) => {
+    const rows = [];
+    for (let i = 0; i < 9; i++) {
+      const row = [];
+      for (let j = 0; j < 9; j++) {
+        row.push(parseInt(str[i*9 + j]));
+      }
+      rows.push(row);
+    }
+    rows.forEach(r => console.log(r));
+    const blocks = switchBetweenBlocksAndRows(rows);
+    return blocks;
+  }
 
-  });
+  /*useEffect(() => {
+    fetch('https://sudoku-solving-api.herokuapp.com/')
+      .then((response) => response.json())
+      .then((data) => {
+        const apiSudokuResponse = stringToSudoku(data.sudokuString);
+        setBoard(apiSudokuResponse);
+      })
+  })*/
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -102,7 +113,7 @@ const App = () => {
           styles={styles}
           selectedNum={selectedNum}
           handleErase={() => setSelectedNum(null)}
-          solve={solve}
+          solve={(e) => solve()}
         />
         <Numbers styles={styles} setSelectedNum={setSelectedNum} selectedNum={selectedNum} />
       </View>
