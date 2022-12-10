@@ -78,7 +78,8 @@ const App = () => {
     for (let i = 0; i < 9; i++) {
       const row = [];
       for (let j = 0; j < 9; j++) {
-        row.push(parseInt(str[i*9 + j]));
+        const cell = parseInt(str[i*9 + j]);
+        cell === '0' ? row.push(null) : row.push(cell)
       }
       rows.push(row);
     }
