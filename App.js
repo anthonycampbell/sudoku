@@ -78,7 +78,7 @@ const App = () => {
         uri: c.assets[0].uri
       })
       console.log(formData);
-      axios.post('http://127.0.0.1:5000/parse', formData, {
+      axios.post('https://sudoku-solving-api.herokuapp.com/parse', formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         }
