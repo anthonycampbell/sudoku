@@ -70,20 +70,21 @@ const App = () => {
 
   const accessPhotos = (e) => {
     launchImageLibrary({}, (c) => {
-      console.log(c)
+      console.log(c.assets[0].fileName, c.assets[0].type, c.assets[0].uri)
       const formData = new FormData()
       formData.append('photo', {
-        uri: c.assets[0].uri,
-        type: c.assets[0].type,
-        name: c.assets[0].fileName
+        name: 'photo.jpg',
+        type: 'image/jpeg',
+        uri: c.assets[0].uri
       })
-      axios({
-        method: 'post',
-        url: 'https://sudoku-solving-api.herokuapp.com/parse',
-        data: formData
+      console.log(formData);
+      axios.post('http://127.0.0.1:5000/parse', formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
       })
-        .then((res, stat) => {
-          console.log(res);
+        .then((res) => {
+          console.log(res.data);
         })
         .catch((e) => {
           console.log(e);
