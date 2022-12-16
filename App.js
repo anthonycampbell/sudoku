@@ -75,7 +75,6 @@ const App = () => {
       formData.append('photo', {
         name: 'photo.jpg',
         type: 'image/jpeg',
-        uri: c.assets[0].uri
       })
       console.log(formData);
       axios.post('https://sudoku-solving-api.herokuapp.com/parse', formData, {
