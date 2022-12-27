@@ -73,11 +73,13 @@ const App = () => {
       console.log(c.assets[0].fileName, c.assets[0].type, c.assets[0].uri)
       const formData = new FormData()
       formData.append('photo', {
-        name: 'photo.jpg',
-        type: 'image/jpeg',
+        uri: c.assets[0].uri,
+        name: c.assets[0].fileName,
+        type: c.assets[0].type,
       })
       console.log(formData);
-      axios.post('https://sudoku-solving-api.herokuapp.com/parse', formData, {
+      //axios.post('https://sudoku-solving-api.herokuapp.com/parse', formData, {
+      axios.post('http://127.0.0.1:5000/parse', formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         }

@@ -54,7 +54,7 @@ def splitBoxes(img):
     return boxes
 
 
-image = cv2.imread('sudoku.png')
+image = cv2.imread('sudoku3.jpg')
 image = cv2.resize(image, (widthImg, heightImg))
 thresh = preProcess(image)
 
@@ -72,6 +72,7 @@ if biggest.size != 0:
     imgWarpColored = cv2.cvtColor(imgWarpColored, cv2.COLOR_BGR2GRAY)
 
     thresh = cv2.adaptiveThreshold(imgWarpColored,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,57,5)
+    cv2.imshow('thrsh', thresh)
     cnts = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
     for c in cnts:
@@ -116,12 +117,12 @@ if biggest.size != 0:
             # result[mask == 0] = 255
             # text = pytesseract.image_to_string(result)
             x, y, w, h = cv2.boundingRect(c)
-            rect = cv2.rectangle(imgWarpColored, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            cropped = imgWarpColored[y:y + h, x:x + w]
-            # cv2.imshow('crop', cropped)
-            # cv2.waitKey(1)
+            rect = cv2.rectangle(thresh, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cropped = thresh[y:y + h, x:x + w]
+            cv2.imshow('crop', cropped)
+            cv2.waitKey(1)
             text = pytesseract.image_to_string(
-                cropped, lang="eng", config='--psm 9 --oem 3 -c tessedit_char_whitelist=0123456789')
+                cropped, lang="eng", config='--psm 9 --oem 3 -c tessedit_char_whitelist=123456789')
             text = text.replace("\n", "")
             returnStr += text or '0'
     print(returnStr)
