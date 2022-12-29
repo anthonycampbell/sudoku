@@ -67,9 +67,8 @@ if biggest.size != 0:
     pts2 = np.float32([[0, 0], [widthImg, 0], [0, heightImg], [widthImg, heightImg]])
     matrix = cv2.getPerspectiveTransform(pts1, pts2)
     imgWarpColored = cv2.warpPerspective(image, matrix, (widthImg, heightImg))
-    cv2.imshow('asdvnm', imgWarpColored)
-    cv2.waitKey(1)
     imgWarpColored = cv2.cvtColor(imgWarpColored, cv2.COLOR_BGR2GRAY)
+    cpThresh = cv2.adaptiveThreshold(imgWarpColored, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 57, 5)
     thresh = cv2.adaptiveThreshold(imgWarpColored, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 57, 5)
 
     cnts = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -107,22 +106,25 @@ if biggest.size != 0:
     i = 0
     for row in sudoku_rows:
         for c in row:
-            mask = np.zeros(imgWarpColored.shape, dtype=np.uint8)
-            cv2.drawContours(mask, [c], -1, (255, 255, 255), -1)
-            result = cv2.bitwise_and(imgWarpColored, mask)
-            result[mask == 0] = 255
-            cv2.imshow(str(i), result)
-            i = i+1
-            # cv2.waitKey(0)
-            text = pytesseract.image_to_string(result, lang="eng", config='--psm 6 --oem 3 -c tessedit_char_whitelist=123456789')
+            # mask = np.zeros(imgWarpColored.shape, dtype=np.uint8)
+            # cv2.drawContours(mask, [c], -1, (255, 255, 255), -1)
+            # result = cv2.bitwise_and(imgWarpColored, mask)
+            # result[mask == 0] = 255
+            # cv2.imshow(str(i), result)
+            # i = i+1
+            # # cv2.waitKey(0)
+            # text = pytesseract.image_to_string(result, lang="eng", config='--psm 6 --oem 3 -c tessedit_char_whitelist=123456789')
+            # print(text)
+            x, y, w, h = cv2.boundingRect(c)
+            rect = cv2.rectangle(cpThresh, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cropped = cpThresh[y:y + h, x:x + w]
+            (cH, cW) = cropped.shape[:2]
+            enlarged = cv2.resize(cropped, (cH*3, cW*3))
+            cv2.imshow('crop', enlarged)
+            cv2.waitKey(0)
+            text = pytesseract.image_to_string(enlarged, lang="eng", config='--psm 6 --oem 3 -c tessedit_char_whitelist=123456789')
+            text = text.replace("\n", "")
             print(text)
-            # x, y, w, h = cv2.boundingRect(c)
-            # rect = cv2.rectangle(thresh1, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            # cropped = thresh0[y:y + h, x:x + w]
-            # cv2.imshow('crop', cropped)
-            # cv2.waitKey(30)
-            # text = pytesseract.image_to_string(cropped, lang="eng", config='--psm 9 --oem 1 -c tessedit_char_whitelist=123456789')
-            # text = text.replace("\n", "")
-            # returnStr += text or '0'
+            returnStr += text or '0'
     # cv2.waitKey(0)
     print(returnStr)
