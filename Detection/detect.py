@@ -59,20 +59,19 @@ image = cv2.resize(image, (widthImg, heightImg))
 thresh = preProcess(image)
 
 # Filter out all numbers and noise to isolate only boxes
-cnts, heirarchy = cv2.findContours(
-    thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+cnts, heirarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 biggest, maxArea = biggestContour(cnts)
 if biggest.size != 0:
     biggest = reorder(biggest)
     pts1 = np.float32(biggest)
-    pts2 = np.float32(
-        [[0, 0], [widthImg, 0], [0, heightImg], [widthImg, heightImg]])
+    pts2 = np.float32([[0, 0], [widthImg, 0], [0, heightImg], [widthImg, heightImg]])
     matrix = cv2.getPerspectiveTransform(pts1, pts2)
     imgWarpColored = cv2.warpPerspective(image, matrix, (widthImg, heightImg))
+    cv2.imshow('asdvnm', imgWarpColored)
+    cv2.waitKey(1)
     imgWarpColored = cv2.cvtColor(imgWarpColored, cv2.COLOR_BGR2GRAY)
+    thresh = cv2.adaptiveThreshold(imgWarpColored, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 57, 5)
 
-    thresh = cv2.adaptiveThreshold(imgWarpColored,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,57,5)
-    cv2.imshow('thrsh', thresh)
     cnts = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
     for c in cnts:
@@ -82,13 +81,9 @@ if biggest.size != 0:
 
     # Fix horizontal and vertical lines
     vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 5))
-    thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE,
-                            vertical_kernel, iterations=9)
+    thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, vertical_kernel, iterations=9)
     horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 1))
-    thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE,
-                            horizontal_kernel, iterations=4)
-
-    dilation = cv2.dilate(thresh, vertical_kernel, iterations=1)
+    thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, horizontal_kernel, iterations=4)
 
     # Sort by top to bottom and each row by left to right
     invert = 255 - thresh
@@ -109,20 +104,25 @@ if biggest.size != 0:
 
     # Iterate through each box
     returnStr = ""
+    i = 0
     for row in sudoku_rows:
         for c in row:
-            # mask = np.zeros(imgWarpColored.shape, dtype=np.uint8)
-            # cv2.drawContours(mask, [c], -1, (255, 255, 255), -1)
-            # result = cv2.bitwise_and(imgWarpColored, mask)
-            # result[mask == 0] = 255
-            # text = pytesseract.image_to_string(result)
-            x, y, w, h = cv2.boundingRect(c)
-            rect = cv2.rectangle(thresh, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            cropped = thresh[y:y + h, x:x + w]
-            cv2.imshow('crop', cropped)
-            cv2.waitKey(1)
-            text = pytesseract.image_to_string(
-                cropped, lang="eng", config='--psm 9 --oem 3 -c tessedit_char_whitelist=123456789')
-            text = text.replace("\n", "")
-            returnStr += text or '0'
+            mask = np.zeros(imgWarpColored.shape, dtype=np.uint8)
+            cv2.drawContours(mask, [c], -1, (255, 255, 255), -1)
+            result = cv2.bitwise_and(imgWarpColored, mask)
+            result[mask == 0] = 255
+            cv2.imshow(str(i), result)
+            i = i+1
+            # cv2.waitKey(0)
+            text = pytesseract.image_to_string(result, lang="eng", config='--psm 6 --oem 3 -c tessedit_char_whitelist=123456789')
+            print(text)
+            # x, y, w, h = cv2.boundingRect(c)
+            # rect = cv2.rectangle(thresh1, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            # cropped = thresh0[y:y + h, x:x + w]
+            # cv2.imshow('crop', cropped)
+            # cv2.waitKey(30)
+            # text = pytesseract.image_to_string(cropped, lang="eng", config='--psm 9 --oem 1 -c tessedit_char_whitelist=123456789')
+            # text = text.replace("\n", "")
+            # returnStr += text or '0'
+    # cv2.waitKey(0)
     print(returnStr)
