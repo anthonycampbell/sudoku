@@ -1,4 +1,4 @@
-const switchBetweenBlocksAndRows = function (board) {
+const switchBetweenBlocksAndRows = function (board, isNotProcessing = false) {
   const switched = [[], [], [], [], [], [], [], [], []];
   for (let i = 0; i < board.length; i++) {
     const chunk = board[i];
@@ -7,7 +7,7 @@ const switchBetweenBlocksAndRows = function (board) {
       const ii = (i % 3) * 3 + j % 3;
       switched[c][ii] = chunk[j];
       if (chunk[j] === null) {
-        switched[c][ii] = 0;
+        isNotProcessing ? switched[c][ii] = null : switched[c][ii] = 0;
       }
     }
   }

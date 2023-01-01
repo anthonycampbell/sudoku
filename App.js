@@ -67,6 +67,23 @@ const App = () => {
       setBoard(results[0]);
     }
   }
+  const stringToSudoku = (str) => {
+    const rows = [];
+    for (let i = 0; i < 9; i++) {
+      const row = [];
+      for (let j = 0; j < 9; j++) {
+        const cell = parseInt(str[i * 9 + j]);
+        console.log(cell);
+        cell === 0 ? row.push(null) : row.push(cell)
+      }
+      rows.push(row);
+    }
+    rows.forEach(r => console.log(r));
+    const blocks = switchBetweenBlocksAndRows(rows, true);
+
+    blocks.forEach(r => console.log(r));
+    return blocks;
+  }
 
   const accessPhotos = (e) => {
     launchImageLibrary({}, (c) => {
@@ -85,27 +102,12 @@ const App = () => {
         }
       })
         .then((res) => {
-          console.log(res.data);
+          setBoard(stringToSudoku(res.data.sudokuString));
         })
         .catch((e) => {
           console.log(e);
         })
     });
-  }
-
-  const stringToSudoku = (str) => {
-    const rows = [];
-    for (let i = 0; i < 9; i++) {
-      const row = [];
-      for (let j = 0; j < 9; j++) {
-        const cell = parseInt(str[i * 9 + j]);
-        cell === '0' ? row.push(null) : row.push(cell)
-      }
-      rows.push(row);
-    }
-    rows.forEach(r => console.log(r));
-    const blocks = switchBetweenBlocksAndRows(rows);
-    return blocks;
   }
 
   /*useEffect(() => {
